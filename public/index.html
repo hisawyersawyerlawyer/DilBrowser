@@ -4,392 +4,857 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>dilBrowser</title>
+<title>slhsProxty</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:white;height:100vh;overflow:hidden;background:radial-gradient(ellipse at 20% 20%,#3478db 0%,transparent 45%),radial-gradient(ellipse at 80% 80%,#673ab7 0%,transparent 45%),linear-gradient(135deg,#07162f,#101a40 55%,#030817)}
-.desktop{height:calc(100vh - 52px);position:relative;overflow:hidden}
-.desktop-icon{position:absolute;width:104px;min-height:108px;text-align:center;cursor:grab;padding:9px 5px;border-radius:10px;font-size:13px;text-shadow:0 2px 5px #000;touch-action:none;user-select:none;z-index:1}
-.desktop-icon:hover{background:#ffffff22;outline:1px solid #ffffff25}
-.desktop-icon.dragging{cursor:grabbing;background:#ffffff25;z-index:4}
-.symbol{width:60px;height:60px;display:flex;align-items:center;justify-content:center;margin:0 auto 7px;border-radius:15px;overflow:hidden;background:#fff;box-shadow:0 4px 14px #0003;text-shadow:none}
-.symbol img{width:100%;height:100%;object-fit:contain;padding:7px}
-.tiktok{background:#080808}
-.soundcloud{background:#ff5500}
-.spotify{background:#1ed760}
-.gd{background:linear-gradient(135deg,#24e9a3,#14a9ed);padding:4px}
-.gd img{padding:1px;filter:drop-shadow(0 2px 2px #0005)}
-.info{background:#2674e8;color:white;font-size:32px}
-.taskbar{position:absolute;bottom:0;width:100%;height:52px;background:#10182dcc;backdrop-filter:blur(25px);border-top:1px solid #ffffff25;display:flex;align-items:center;justify-content:center;gap:9px;z-index:10}
-.taskbutton{border:0;background:transparent;color:white;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:19px}
-.taskbutton:hover{background:#ffffff22}
-.clock{position:absolute;right:18px;font-size:12px;text-align:right;line-height:1.5}
-.window{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:min(1000px,94vw);height:min(650px,78vh);min-height:300px;background:#17233aee;border:1px solid #ffffff40;border-radius:12px;overflow:hidden;box-shadow:0 25px 100px #0008;display:flex;flex-direction:column;z-index:5}
-.window.hidden{display:none}
-.titlebar{height:48px;display:flex;align-items:center;padding:0 12px;background:#202d43;gap:10px;flex-shrink:0;cursor:move}
-.title{flex:1;font-size:14px}
-.winbtn{border:0;color:white;background:transparent;padding:10px 13px;cursor:pointer;border-radius:5px}
-.winbtn:hover{background:#ffffff25}
-.winbtn.close:hover{background:#d83b42}
-.toolbar{display:flex;gap:7px;padding:10px;background:#18243a;align-items:center}
-.toolbar button{border:0;border-radius:7px;background:#ffffff16;color:white;padding:9px 12px;cursor:pointer}
-.toolbar button:hover{background:#ffffff2b}
-#address{min-width:0;flex:1;padding:10px 14px;border:1px solid #ffffff25;background:#0c1529;color:white;border-radius:20px;outline:none}
-#address:focus{border-color:#63a9ff}
-.page{flex:1;position:relative;background:#f4f6fb;color:#17233a;overflow:hidden}
-.game-fallback{display:none;position:absolute;top:10px;left:10px;right:10px;z-index:2;padding:10px 12px;border-radius:10px;background:#17233aee;color:#fff;font-size:13px;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 5px 20px #0003}
-.game-fallback button{border:0;border-radius:7px;padding:8px 10px;background:#2563eb;color:#fff;cursor:pointer;white-space:nowrap}
-.game-fallback.show{display:flex}
-.home{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px;text-align:center;background:radial-gradient(ellipse at top,#dbeafe,#f8fafc 65%)}
-.logo{font-size:46px;font-weight:650;letter-spacing:-2px;color:#1d4ed8}
-.subtitle{color:#64748b;margin:10px 0 25px}
-.search{display:flex;gap:8px;width:min(600px,100%)}
-.search input{flex:1;min-width:0;padding:14px 18px;border:1px solid #cbd5e1;border-radius:24px;font-size:15px;outline:none}
-.search button{border:0;background:#2563eb;color:white;border-radius:22px;padding:0 22px;cursor:pointer}
-.links{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:24px}
-.links button{border:1px solid #dbe2ef;background:white;color:#334155;padding:12px 15px;border-radius:12px;cursor:pointer}
-.links button:hover{background:#e8efff}
-#viewer{width:100%;height:100%;border:0;background:white}
-.startmenu{position:absolute;bottom:62px;left:50%;transform:translateX(-50%);width:min(440px,94vw);padding:22px;border:1px solid #ffffff35;border-radius:16px;background:#18243aee;backdrop-filter:blur(25px);box-shadow:0 20px 70px #0007;z-index:20}
-.startmenu.hidden{display:none}
-.startmenu h3{margin:0 0 14px}
-.startgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.startgrid button{border:0;background:#ffffff10;color:white;border-radius:10px;padding:15px 5px;cursor:pointer}
-.startgrid button:hover{background:#ffffff25}
-@media(max-width:600px){.window{height:78vh}.titlebar{height:42px}.toolbar{gap:4px;padding:6px}.toolbar button{padding:9px 8px}.clock{display:none}.logo{font-size:36px}.desktop-icon{width:90px}.symbol{width:54px;height:54px}}
+:root {
+  --bg: #080d20;
+  --panel: rgba(17, 25, 51, .94);
+  --line: rgba(151, 180, 255, .17);
+  --blue: #4285ff;
+  --cyan: #31eaff;
+  --purple: #a66bff;
+  --text: #f4f7ff;
+  --muted: #9ba9ce;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  color: var(--text);
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(ellipse at 16% 15%, #173e82 0%, transparent 40%),
+    radial-gradient(ellipse at 85% 80%, #392065 0%, transparent 42%),
+    linear-gradient(135deg, #060b19, #0b1530 55%, #080817);
+}
+button, input { font: inherit; }
+button { color: inherit; }
+button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+.desktop {
+  height: calc(100vh - 58px);
+  position: relative;
+  overflow: hidden;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size: 42px 42px;
+}
+.desktop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 20%, #03071350 100%);
+}
+.desktop-icon {
+  position: absolute;
+  z-index: 1;
+  width: 100px;
+  min-height: 104px;
+  padding: 10px 5px;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 12px;
+  color: #f5f7ff;
+  text-shadow: 0 2px 7px #000;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.desktop-icon:hover {
+  background: #ffffff10;
+  border-color: #ffffff22;
+  backdrop-filter: blur(8px);
+}
+.desktop-icon.dragging {
+  cursor: grabbing;
+  background: #5688ff25;
+  z-index: 4;
+}
+.symbol {
+  width: 57px;
+  height: 57px;
+  margin: 0 auto 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #ffffff25;
+  border-radius: 17px;
+  background: linear-gradient(145deg,#293d68,#111b36);
+  box-shadow: 0 7px 22px #0005;
+  font-size: 25px;
+  text-shadow: none;
+}
+.symbol img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+}
+.tiktok { background: #111; }
+.soundcloud { background: #ff5500; }
+.spotify { background: #1ed760; }
+.gd {
+  background: linear-gradient(145deg,#21d7ff,#425cff 55%,#a64cff);
+  box-shadow: 0 0 22px #287fff35;
+}
+.gd img { padding: 2px; }
+.info { color: #a8d8ff; }
+.taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 58px;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid #ffffff18;
+  background: rgba(7, 12, 29, .84);
+  backdrop-filter: blur(28px);
+}
+.taskbutton {
+  height: 42px;
+  min-width: 43px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 20px;
+  transition: background .15s, transform .15s;
+}
+.taskbutton:hover {
+  background: #ffffff12;
+  border-color: #ffffff15;
+}
+.taskbutton:active { transform: scale(.94); }
+.start-logo {
+  color: var(--cyan);
+  font-size: 25px;
+}
+.clock {
+  position: absolute;
+  right: 20px;
+  color: #d8e1ff;
+  text-align: right;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.window {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: 47%;
+  transform: translate(-50%,-50%);
+  width: min(1120px, 95vw);
+  height: min(730px, 83vh);
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #a4baff30;
+  border-radius: 20px;
+  background: var(--panel);
+  box-shadow: 0 35px 120px #0009, 0 0 50px #315bff12;
+  backdrop-filter: blur(30px);
+}
+.window.hidden { display: none; }
+.window.maximized {
+  inset: 0 0 58px 0;
+  width: 100%;
+  height: auto;
+  transform: none;
+  border-radius: 0;
+}
+.titlebar {
+  height: 53px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--line);
+  background: #121c38;
+  cursor: move;
+}
+.brandmark {
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: linear-gradient(135deg,var(--cyan),var(--blue),var(--purple));
+  color: white;
+  font-size: 17px;
+  font-weight: 900;
+}
+.title {
+  flex: 1;
+  overflow: hidden;
+  color: #edf2ff;
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.winbtn {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #b6c4e8;
+  cursor: pointer;
+}
+.winbtn:hover { background: #ffffff12; color: white; }
+.winbtn.close:hover { background: #e7475b; }
+.toolbar {
+  min-height: 61px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 13px;
+  border-bottom: 1px solid var(--line);
+  background: #0e1730;
+}
+.navbtn {
+  flex-shrink: 0;
+  width: 35px;
+  height: 35px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: #ffffff08;
+  color: #c6d4f6;
+  cursor: pointer;
+  font-size: 17px;
+}
+.navbtn:hover { background: #ffffff15; }
+.address-wrap {
+  min-width: 0;
+  flex: 1;
+  height: 39px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 13px;
+  border: 1px solid #ffffff12;
+  border-radius: 13px;
+  background: #070d20;
+}
+.address-wrap:focus-within {
+  border-color: #4285ffbb;
+  box-shadow: 0 0 0 3px #4285ff16;
+}
+.lock { color: #72e3b4; font-size: 13px; }
+#address {
+  min-width: 0;
+  flex: 1;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: white;
+  font-size: 12px;
+}
+#address:focus-visible { outline: none; }
+.go-btn {
+  height: 35px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 11px;
+  background: linear-gradient(135deg,#347dff,#7657ff);
+  color: white;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.go-btn:hover { filter: brightness(1.14); }
+.page {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #080d1b;
+}
+.home {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 22px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 25%,#1b3b7b66,transparent 52%),
+    linear-gradient(145deg,#0b132b,#10152e 65%,#14112c);
+}
+.home-logo {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 10px;
+  font-size: clamp(32px,5vw,49px);
+  font-weight: 750;
+  letter-spacing: -2px;
+}
+.home-logo .brandmark {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  font-size: 27px;
+}
+.home-logo span:last-child {
+  background: linear-gradient(100deg,#fff,#9fdcff 55%,#bb9aff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.subtitle {
+  margin: 0 0 29px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.search {
+  width: min(610px,100%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border: 1px solid #9eb8ff27;
+  border-radius: 17px;
+  background: #070d20cc;
+  box-shadow: 0 12px 45px #0003;
+}
+.search input {
+  min-width: 0;
+  flex: 1;
+  height: 43px;
+  padding: 0 13px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: white;
+  font-size: 13px;
+}
+.search input:focus-visible { outline: none; }
+.search button {
+  height: 41px;
+  padding: 0 19px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg,#3886ff,#8154ff);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 650;
+}
+.section-label {
+  width: min(610px,100%);
+  margin: 30px 0 12px;
+  color: #8c9ec7;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
+}
+.links {
+  width: min(610px,100%);
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 10px;
+}
+.app-card {
+  min-width: 0;
+  min-height: 105px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid #ffffff12;
+  border-radius: 15px;
+  background: #ffffff06;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .15s;
+}
+.app-card:hover {
+  transform: translateY(-2px);
+  border-color: #729eff65;
+  background: #ffffff10;
+}
+.app-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #233c6b;
+  font-size: 20px;
+}
+.app-icon img { width: 100%; height: 100%; object-fit: contain; }
+.app-name {
+  overflow: hidden;
+  max-width: 100%;
+  padding: 0 4px;
+  color: #dbe5ff;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.home-foot {
+  margin-top: 28px;
+  color: #64769f;
+  font-size: 10px;
+}
+#viewer {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #000;
+}
+.startmenu {
+  position: absolute;
+  z-index: 25;
+  left: 50%;
+  bottom: 69px;
+  transform: translateX(-50%);
+  width: min(440px,94vw);
+  padding: 22px;
+  border: 1px solid #9cb6ff30;
+  border-radius: 21px;
+  background: rgba(13,22,46,.96);
+  box-shadow: 0 25px 90px #0009;
+  backdrop-filter: blur(28px);
+}
+.startmenu.hidden { display: none; }
+.start-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.start-head strong { font-size: 17px; }
+.start-head small { color: #8193bb; font-size: 10px; }
+.startgrid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 9px;
+}
+.startgrid button {
+  min-height: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  background: #ffffff08;
+  color: #dbe5ff;
+  cursor: pointer;
+  font-size: 11px;
+}
+.startgrid button:hover {
+  border-color: #729eff55;
+  background: #ffffff12;
+}
+.startgrid .start-icon { font-size: 21px; }
+@media(max-width:600px) {
+  .window {
+    top: 46%;
+    width: 98vw;
+    height: 82vh;
+    border-radius: 14px;
+  }
+  .titlebar { height: 45px; padding: 0 8px; gap: 7px; }
+  .toolbar { gap: 4px; padding: 7px; }
+  .navbtn { width: 29px; height: 34px; }
+  .go-btn { padding: 0 10px; }
+  .address-wrap { padding: 0 8px; }
+  .clock { display: none; }
+  .links { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .home { padding: 20px 13px; }
+  .desktop-icon { width: 88px; }
+  .symbol { width: 50px; height: 50px; }
+}
 </style>
 </head>
 <body>
-
 <div class="desktop" id="desktop">
-  <div class="desktop-icon" data-x="20" data-y="20" onclick="showBrowser()">
+  <div class="desktop-icon" data-x="18" data-y="18" onclick="showBrowser()">
     <span class="symbol info">🌐</span>dilBrowser
   </div>
-
-  <div class="desktop-icon" data-x="20" data-y="145" onclick="about()">
-    <span class="symbol info">ℹ️</span>About dilBrowser
+  <div class="desktop-icon" data-x="18" data-y="132" onclick="about()">
+    <span class="symbol info">ⓘ</span>About dilBrowser
   </div>
-
-  <div class="desktop-icon" data-x="20" data-y="270" onclick="openApp('https://www.tiktok.com/')">
+  <div class="desktop-icon" data-x="18" data-y="246" onclick="openApp('https://www.tiktok.com/')">
     <span class="symbol tiktok"><img src="https://cdn.simpleicons.org/tiktok/FFFFFF" alt="TikTok"></span>TikTok
   </div>
-
-  <div class="desktop-icon" data-x="20" data-y="395" onclick="openApp('https://soundcloud.com/')">
+  <div class="desktop-icon" data-x="18" data-y="360" onclick="openApp('https://soundcloud.com/')">
     <span class="symbol soundcloud"><img src="https://cdn.simpleicons.org/soundcloud/FFFFFF" alt="SoundCloud"></span>SoundCloud
   </div>
-
-  <div class="desktop-icon" data-x="20" data-y="520" onclick="openApp('https://open.spotify.com/')">
+  <div class="desktop-icon" data-x="18" data-y="474" onclick="openApp('https://open.spotify.com/')">
     <span class="symbol spotify"><img src="https://cdn.simpleicons.org/spotify/000000" alt="Spotify"></span>Spotify
   </div>
-
-  <div class="desktop-icon" data-x="140" data-y="20" onclick="launchGeometryDash()">
-    <span class="symbol gd">
-      <img src="https://raw.githack.com/Ale7208/Geometry-Dash-webport/main/ref/favicon.ico" alt="Geometry Dash icon" onerror="this.style.display='none';this.parentElement.textContent='▣';this.parentElement.style.fontSize='40px'">
-    </span>
-    Geometry Dash
+  <div class="desktop-icon" data-x="132" data-y="18" onclick="launchGeometryDash()">
+    <span class="symbol gd"><img src="https://cdn.jsdelivr.net/gh/Ale7208/Geometry-Dash-webport@main/favicon.ico" alt="Geometry Dash" onerror="this.style.display='none';this.parentElement.textContent='▣'"></span>Geometry Dash
   </div>
 </div>
 
 <div class="window" id="window">
   <div class="titlebar" id="titlebar">
-    <span>🌐</span>
+    <span class="brandmark">D</span>
     <span class="title" id="windowtitle">dilBrowser</span>
-    <button class="winbtn" onclick="minimize()">—</button>
-    <button class="winbtn" onclick="maximize()">□</button>
-    <button class="winbtn close" onclick="closeBrowser()">✕</button>
+    <button class="winbtn" onclick="minimize()" aria-label="Minimize">—</button>
+    <button class="winbtn" onclick="maximize()" aria-label="Maximize">□</button>
+    <button class="winbtn close" onclick="closeBrowser()" aria-label="Close">✕</button>
   </div>
 
   <div class="toolbar">
-    <button onclick="goBack()" title="Back">←</button>
-    <button onclick="goForward()" title="Forward">→</button>
-    <button onclick="reloadPage()" title="Reload">↻</button>
-    <button onclick="goHome()" title="Home">⌂</button>
-    <input id="address" placeholder="Search or enter a website address" onkeydown="if(event.key==='Enter')navigate(this.value)">
-    <button onclick="navigate(document.getElementById('address').value)">Go</button>
-    <button title="Open current page in a new tab" onclick="openCurrentInTab()">↗</button>
+    <button class="navbtn" onclick="goBack()" title="Back">←</button>
+    <button class="navbtn" onclick="goForward()" title="Forward">→</button>
+    <button class="navbtn" onclick="reloadPage()" title="Reload">↻</button>
+    <button class="navbtn" onclick="goHome()" title="Home">⌂</button>
+    <div class="address-wrap">
+      <span class="lock">◆</span>
+      <input id="address" placeholder="Search or enter a website address"
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter')navigate(this.value)">
+    </div>
+    <button class="go-btn" onclick="navigate(document.getElementById('address').value)">Go</button>
   </div>
 
   <div class="page">
-    <div class="game-fallback" id="gameFallback">
-      <span>If the game does not load inside dilBrowser, open it directly.</span>
-      <button onclick="openGeometryDashTab()">Open game ↗</button>
-    </div>
-
     <div class="home" id="home">
-      <div class="logo">dilBrowser</div>
-      <div class="subtitle">Your own little corner of the internet.</div>
+      <div class="home-logo">
+        <span class="brandmark">D</span>
+        <span>dilBrowser</span>
+      </div>
+      <p class="subtitle">Your own little corner of the internet.</p>
+
       <div class="search">
-        <input id="homesearch" placeholder="Search or enter a website..." onkeydown="if(event.key==='Enter')navigate(this.value)">
-        <button onclick="navigate(document.getElementById('homesearch').value)">Search</button>
+        <input id="homesearch" placeholder="Search or enter a website..."
+          onkeydown="if(event.key==='Enter')navigate(this.value)">
+        <button onclick="navigate(document.getElementById('homesearch').value)">Search ↗</button>
       </div>
+
+      <div class="section-label">Your apps</div>
       <div class="links">
-        <button onclick="navigate('https://www.wikipedia.org')">📚 Wikipedia</button>
-        <button onclick="navigate('https://www.example.com')">🌐 Example</button>
-        <button onclick="navigate('https://developer.mozilla.org')">💻 MDN Docs</button>
-        <button onclick="launchGeometryDash()">🟩 Geometry Dash</button>
+        <button class="app-card" onclick="launchGeometryDash()">
+          <span class="app-icon gd">
+            <img src="https://cdn.jsdelivr.net/gh/Ale7208/Geometry-Dash-webport@main/favicon.ico" alt="">
+          </span>
+          <span class="app-name">Geometry Dash</span>
+        </button>
+        <button class="app-card" onclick="openApp('https://www.tiktok.com/')">
+          <span class="app-icon" style="background:#171717">♪</span>
+          <span class="app-name">TikTok</span>
+        </button>
+        <button class="app-card" onclick="openApp('https://soundcloud.com/')">
+          <span class="app-icon" style="background:#ff5500">☁</span>
+          <span class="app-name">SoundCloud</span>
+        </button>
+        <button class="app-card" onclick="openApp('https://open.spotify.com/')">
+          <span class="app-icon" style="background:#1ed760;color:#071a0b">≋</span>
+          <span class="app-name">Spotify</span>
+        </button>
+        <button class="app-card" onclick="navigate('https://www.wikipedia.org/')">
+          <span class="app-icon">📚</span>
+          <span class="app-name">Wikipedia</span>
+        </button>
+        <button class="app-card" onclick="navigate('https://developer.mozilla.org/')">
+          <span class="app-icon">⌘</span>
+          <span class="app-name">MDN Docs</span>
+        </button>
+        <button class="app-card" onclick="navigate('https://www.google.com/')">
+          <span class="app-icon">🔎</span>
+          <span class="app-name">Google</span>
+        </button>
+        <button class="app-card" onclick="about()">
+          <span class="app-icon">ⓘ</span>
+          <span class="app-name">About</span>
+        </button>
       </div>
-      <p style="margin-top:35px;color:#94a3b8;font-size:12px">A web desktop experiment</p>
+      <div class="home-foot">dilBrowser · A little desktop, a lot of possibilities.</div>
     </div>
 
-    <iframe id="viewer" title="Website viewer" hidden referrerpolicy="no-referrer" allow="fullscreen; autoplay; gamepad"></iframe>
+    <iframe id="viewer" title="Website viewer" hidden
+      referrerpolicy="no-referrer"
+      allow="fullscreen; autoplay; gamepad; clipboard-read; clipboard-write">
+    </iframe>
   </div>
 </div>
 
 <div class="startmenu hidden" id="startmenu">
-  <h3>Start</h3>
+  <div class="start-head">
+    <strong>Start</strong>
+    <small>dilBrowser apps</small>
+  </div>
   <div class="startgrid">
-    <button onclick="goHome();hideStart()">🏠<br>Home</button>
-    <button onclick="openApp('https://www.tiktok.com/');hideStart()">♪<br>TikTok</button>
-    <button onclick="openApp('https://soundcloud.com/');hideStart()">☁<br>SoundCloud</button>
-    <button onclick="openApp('https://open.spotify.com/');hideStart()">≋<br>Spotify</button>
-    <button onclick="launchGeometryDash();hideStart()">🟩<br>Geometry Dash</button>
-    <button onclick="navigate('https://www.wikipedia.org');hideStart()">📚<br>Wikipedia</button>
-    <button onclick="about();hideStart()">ℹ️<br>About</button>
+    <button onclick="goHome();hideStart()"><span class="start-icon">⌂</span>Home</button>
+    <button onclick="launchGeometryDash();hideStart()"><span class="start-icon">▣</span>Geometry Dash</button>
+    <button onclick="openApp('https://www.tiktok.com/');hideStart()"><span class="start-icon">♪</span>TikTok</button>
+    <button onclick="openApp('https://soundcloud.com/');hideStart()"><span class="start-icon">☁</span>SoundCloud</button>
+    <button onclick="openApp('https://open.spotify.com/');hideStart()"><span class="start-icon">≋</span>Spotify</button>
+    <button onclick="navigate('https://www.wikipedia.org/');hideStart()"><span class="start-icon">📚</span>Wikipedia</button>
+    <button onclick="navigate('https://www.google.com/');hideStart()"><span class="start-icon">🔎</span>Google</button>
+    <button onclick="about();hideStart()"><span class="start-icon">ⓘ</span>About</button>
   </div>
 </div>
 
 <div class="taskbar">
-  <button class="taskbutton" onclick="toggleStart()">⊞</button>
-  <button class="taskbutton" onclick="showBrowser()">🌐</button>
-  <button class="taskbutton" onclick="goHome()">⌂</button>
+  <button class="taskbutton start-logo" onclick="toggleStart()" title="Start">⊞</button>
+  <button class="taskbutton" onclick="showBrowser()" title="dilBrowser">🌐</button>
+  <button class="taskbutton" onclick="goHome()" title="Home">⌂</button>
   <div class="clock" id="clock"></div>
 </div>
 
 <script>
-const win=document.getElementById('window');
-const home=document.getElementById('home');
-const viewer=document.getElementById('viewer');
-const address=document.getElementById('address');
+const win = document.getElementById('window');
+const home = document.getElementById('home');
+const viewer = document.getElementById('viewer');
+const address = document.getElementById('address');
+const windowTitle = document.getElementById('windowtitle');
 
-let historyList=[],historyIndex=-1,maximized=false,previousStyle={};
+const geometryURL = 'https://truffled.lol/games/geo/index.html';
+const truffledURL = 'https://truffled.lol/';
 
-const geometryURL='https://raw.githack.com/Ale7208/Geometry-Dash-webport/main/index.html';
-const geometryIconURL='https://raw.githack.com/Ale7208/Geometry-Dash-webport/main/ref/favicon.ico';
+let historyList = [];
+let historyIndex = -1;
+let maximized = false;
+let previousStyle = {};
 
-function openApp(url){
-  window.open(url,'_blank','noopener,noreferrer');
+function openApp(url) {
+  window.open(url, '_blank', 'noopener,noreferrer');
 }
 
-function openCurrentInTab(){
-  const url=address.value.trim();
-  if(url && /^https?:\/\//i.test(url)){
-    window.open(url,'_blank','noopener,noreferrer');
+function normalizeUrl(value) {
+  value = value.trim();
+  if (!value) return '';
+
+  if (/\s/.test(value) || !value.includes('.')) {
+    return 'https://www.google.com/search?q=' + encodeURIComponent(value);
   }
-}
 
-function launchGeometryDash(){
-  navigate(geometryURL);
-  document.getElementById('windowtitle').textContent='Geometry Dash';
-  address.value=geometryURL;
-  document.getElementById('gameFallback').classList.add('show');
-}
-
-function openGeometryDashTab(){
-  window.open(geometryURL,'_blank','noopener,noreferrer');
-}
-
-function normalizeUrl(value){
-  value=value.trim();
-  if(!value)return '';
-  if(/\s/.test(value)||!value.includes('.')){
-    return 'https://www.google.com/search?q='+encodeURIComponent(value);
-  }
-  if(!/^https?:\/\//i.test(value))value='https://'+value;
+  if (!/^https?:\/\//i.test(value)) value = 'https://' + value;
   return value;
 }
 
-function navigate(value,addHistory=true){
-  const url=normalizeUrl(value);
-  if(!url)return;
+function navigate(value, addHistory = true, pageTitle = 'dilBrowser') {
+  const url = normalizeUrl(value);
+  if (!url) return;
 
-  if(addHistory){
-    historyList=historyList.slice(0,historyIndex+1);
-    historyList.push(url);
-    historyIndex=historyList.length-1;
+  if (addHistory) {
+    historyList = historyList.slice(0, historyIndex + 1);
+    historyList.push({ url, title: pageTitle });
+    historyIndex = historyList.length - 1;
   }
 
-  address.value=url;
-  document.getElementById('homesearch').value=value;
-  home.hidden=true;
-  viewer.hidden=false;
-  viewer.src=url;
-
-  const isGame=url.split('?')[0]===geometryURL.split('?')[0];
-  document.getElementById('windowtitle').textContent=isGame?'Geometry Dash':'dilBrowser';
-  document.getElementById('gameFallback').classList.toggle('show',isGame);
+  address.value = url;
+  document.getElementById('homesearch').value = value;
+  home.hidden = true;
+  viewer.hidden = false;
+  viewer.src = url;
+  windowTitle.textContent = pageTitle;
   showBrowser();
+  hideStart();
 }
 
-function goBack(){
-  if(historyIndex>0){
-    historyIndex--;
-    navigate(historyList[historyIndex],false);
-  }
+function launchGeometryDash() {
+  navigate(geometryURL, true, 'Geometry Dash');
 }
 
-function goForward(){
-  if(historyIndex<historyList.length-1){
-    historyIndex++;
-    navigate(historyList[historyIndex],false);
-  }
+function goBack() {
+  if (historyIndex <= 0) return;
+  historyIndex--;
+  const item = historyList[historyIndex];
+  navigate(item.url, false, item.title);
 }
 
-function reloadPage(){
-  if(!viewer.hidden && viewer.src){
-    viewer.src=viewer.src;
-  }else{
+function goForward() {
+  if (historyIndex >= historyList.length - 1) return;
+  historyIndex++;
+  const item = historyList[historyIndex];
+  navigate(item.url, false, item.title);
+}
+
+function reloadPage() {
+  if (!viewer.hidden && address.value) {
+    viewer.src = address.value;
+  } else {
     goHome();
   }
 }
 
-function goHome(){
-  address.value='';
-  viewer.hidden=true;
-  viewer.src='about:blank';
-  home.hidden=false;
-  document.getElementById('windowtitle').textContent='dilBrowser';
-  document.getElementById('gameFallback').classList.remove('show');
+function goHome() {
+  address.value = '';
+  viewer.src = 'about:blank';
+  viewer.hidden = true;
+  home.hidden = false;
+  windowTitle.textContent = 'dilBrowser';
   showBrowser();
+  hideStart();
 }
 
-function showBrowser(){
+function showBrowser() {
   win.classList.remove('hidden');
 }
 
-function closeBrowser(){
+function closeBrowser() {
+  win.classList.add('hidden');
+  hideStart();
+}
+
+function minimize() {
   win.classList.add('hidden');
 }
 
-function minimize(){
-  win.classList.add('hidden');
-}
-
-function maximize(){
-  if(!maximized){
-    previousStyle={
-      left:win.style.left,
-      top:win.style.top,
-      width:win.style.width,
-      height:win.style.height,
-      transform:win.style.transform,
-      borderRadius:win.style.borderRadius
+function maximize() {
+  if (!maximized) {
+    previousStyle = {
+      left: win.style.left,
+      top: win.style.top,
+      width: win.style.width,
+      height: win.style.height,
+      transform: win.style.transform
     };
-    win.style.left='0';
-    win.style.top='0';
-    win.style.width='100vw';
-    win.style.height='calc(100vh - 52px)';
-    win.style.transform='none';
-    win.style.borderRadius='0';
-    maximized=true;
-  }else{
-    Object.assign(win.style,previousStyle);
-    maximized=false;
+    win.classList.add('maximized');
+    win.style.left = '';
+    win.style.top = '';
+    win.style.width = '';
+    win.style.height = '';
+    win.style.transform = '';
+    maximized = true;
+  } else {
+    win.classList.remove('maximized');
+    Object.assign(win.style, previousStyle);
+    maximized = false;
   }
 }
 
-function toggleStart(){
+function toggleStart() {
   document.getElementById('startmenu').classList.toggle('hidden');
 }
 
-function hideStart(){
+function hideStart() {
   document.getElementById('startmenu').classList.add('hidden');
 }
 
-function about(){
-  alert('dilBrowser\nA Windows-inspired desktop and browser demo. Geometry Dash uses the public webport HTML and supporting game files. If it does not display inside the window, use the ↗ button to open the game in a separate tab.');
+function about() {
+  alert(
+    'dilBrowser\n\n' +
+    'A custom desktop-style web experience.\n\n' +
+    'Geometry Dash loads inside the browser window. ' +
+    'Some websites may block embedding, which this page cannot override.'
+  );
 }
 
-function updateClock(){
-  const now=new Date();
-  document.getElementById('clock').innerHTML=
-    now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+
-    '<br>'+
-    now.toLocaleDateString();
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').innerHTML =
+    now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) +
+    '<br>' + now.toLocaleDateString();
 }
-
 updateClock();
-setInterval(updateClock,1000);
+setInterval(updateClock, 1000);
 
-// Make desktop icons movable.
-const desktop=document.getElementById('desktop');
-let draggedIcon=null,startX=0,startY=0,originX=0,originY=0,moved=false;
+// Make desktop icons draggable.
+const desktop = document.getElementById('desktop');
+let draggedIcon = null;
+let startX = 0, startY = 0, originX = 0, originY = 0, moved = false;
 
-document.querySelectorAll('.desktop-icon').forEach(icon=>{
-  icon.style.left=(Number(icon.dataset.x)||0)+'px';
-  icon.style.top=(Number(icon.dataset.y)||0)+'px';
+document.querySelectorAll('.desktop-icon').forEach(icon => {
+  icon.style.left = (Number(icon.dataset.x) || 0) + 'px';
+  icon.style.top = (Number(icon.dataset.y) || 0) + 'px';
 
-  icon.addEventListener('pointerdown',e=>{
-    if(e.button!==0)return;
-    draggedIcon=icon;
-    moved=false;
-    startX=e.clientX;
-    startY=e.clientY;
-    originX=parseFloat(icon.style.left)||0;
-    originY=parseFloat(icon.style.top)||0;
+  icon.addEventListener('pointerdown', event => {
+    if (event.button !== 0) return;
+    draggedIcon = icon;
+    moved = false;
+    startX = event.clientX;
+    startY = event.clientY;
+    originX = parseFloat(icon.style.left) || 0;
+    originY = parseFloat(icon.style.top) || 0;
     icon.classList.add('dragging');
-    icon.setPointerCapture(e.pointerId);
+    icon.setPointerCapture(event.pointerId);
   });
 
-  icon.addEventListener('pointermove',e=>{
-    if(draggedIcon!==icon)return;
+  icon.addEventListener('pointermove', event => {
+    if (draggedIcon !== icon) return;
 
-    const dx=e.clientX-startX;
-    const dy=e.clientY-startY;
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+    if (!moved) return;
 
-    if(Math.abs(dx)>4||Math.abs(dy)>4)moved=true;
-    if(!moved)return;
+    const maxX = Math.max(0, desktop.clientWidth - icon.offsetWidth);
+    const maxY = Math.max(0, desktop.clientHeight - icon.offsetHeight);
 
-    const maxX=Math.max(0,desktop.clientWidth-icon.offsetWidth);
-    const maxY=Math.max(0,desktop.clientHeight-icon.offsetHeight);
-
-    icon.style.left=Math.max(0,Math.min(maxX,originX+dx))+'px';
-    icon.style.top=Math.max(0,Math.min(maxY,originY+dy))+'px';
+    icon.style.left = Math.max(0, Math.min(maxX, originX + dx)) + 'px';
+    icon.style.top = Math.max(0, Math.min(maxY, originY + dy)) + 'px';
   });
 
-  function stopDragging(){
-    if(draggedIcon!==icon)return;
+  function stopDragging() {
+    if (draggedIcon !== icon) return;
     icon.classList.remove('dragging');
-    if(moved){
-      icon.dataset.x=parseFloat(icon.style.left)||0;
-      icon.dataset.y=parseFloat(icon.style.top)||0;
-    }
-    draggedIcon=null;
+    draggedIcon = null;
   }
 
-  icon.addEventListener('pointerup',stopDragging);
-  icon.addEventListener('pointercancel',stopDragging);
+  icon.addEventListener('pointerup', stopDragging);
+  icon.addEventListener('pointercancel', stopDragging);
 
-  icon.addEventListener('click',e=>{
-    if(moved){
-      e.stopImmediatePropagation();
-      e.preventDefault();
-      moved=false;
+  icon.addEventListener('click', event => {
+    if (moved) {
+      event.stopImmediatePropagation();
+      event.preventDefault();
+      moved = false;
     }
-  },true);
+  }, true);
 });
 
-// Make the browser window draggable.
-const titlebar=document.getElementById('titlebar');
-let dragging=false,offsetX=0,offsetY=0;
+// Allow dragging the browser window by its title bar.
+const titlebar = document.getElementById('titlebar');
+let draggingWindow = false;
+let offsetX = 0, offsetY = 0;
 
-titlebar.addEventListener('pointerdown',e=>{
-  if(e.target.closest('button')||maximized)return;
-  dragging=true;
-  const rect=win.getBoundingClientRect();
-  offsetX=e.clientX-rect.left;
-  offsetY=e.clientY-rect.top;
-  titlebar.setPointerCapture(e.pointerId);
+titlebar.addEventListener('pointerdown', event => {
+  if (event.target.closest('button') || maximized) return;
+
+  draggingWindow = true;
+  const rect = win.getBoundingClientRect();
+  offsetX = event.clientX - rect.left;
+  offsetY = event.clientY - rect.top;
+  titlebar.setPointerCapture(event.pointerId);
 });
 
-titlebar.addEventListener('pointermove',e=>{
-  if(!dragging)return;
-  win.style.left=(e.clientX-offsetX)+'px';
-  win.style.top=(e.clientY-offsetY)+'px';
-  win.style.transform='none';
+titlebar.addEventListener('pointermove', event => {
+  if (!draggingWindow) return;
+  win.style.left = (event.clientX - offsetX) + 'px';
+  win.style.top = (event.clientY - offsetY) + 'px';
+  win.style.transform = 'none';
 });
 
-titlebar.addEventListener('pointerup',()=>dragging=false);
-titlebar.addEventListener('pointercancel',()=>dragging=false);
+titlebar.addEventListener('pointerup', () => draggingWindow = false);
+titlebar.addEventListener('pointercancel', () => draggingWindow = false);
+
+// Make the logo in the embedded game navigate within the same iframe.
+viewer.addEventListener('load', () => {
+  // Cross-origin pages cannot be inspected or modified by this page.
+  // The supplied game's own logo link may therefore still open a new tab.
+});
 </script>
 </body>
 </html>

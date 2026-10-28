@@ -8,15 +8,16 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:white;height:100vh;overflow:hidden;background:radial-gradient(ellipse at 20% 20%,#3478db 0%,transparent 45%),radial-gradient(ellipse at 80% 80%,#673ab7 0%,transparent 45%),linear-gradient(135deg,#07162f,#101a40 55%,#030817)}
-.desktop{height:calc(100vh - 52px);padding:24px;display:flex;flex-direction:column;align-items:flex-start;gap:22px;overflow:auto}
-.desktop-icons{display:grid;grid-template-columns:repeat(2,90px);gap:12px 10px}
-.desktop-icon{width:90px;min-height:94px;text-align:center;cursor:pointer;padding:10px 4px;border-radius:10px;font-size:12px;text-shadow:0 2px 5px #000}
-.desktop-icon:hover{background:#ffffff25;outline:1px solid #ffffff30}
-.symbol{width:52px;height:52px;display:flex;align-items:center;justify-content:center;margin:0 auto 7px;border-radius:14px;font-size:29px;text-shadow:none;box-shadow:0 4px 14px #0003}
-.tiktok{background:#101010;color:white}
-.soundcloud{background:#ff6a18;color:white}
-.spotify{background:#1ed760;color:#071b0e}
-.info{background:#2674e8;color:white}
+.desktop{height:calc(100vh - 52px);position:relative;overflow:hidden}
+.desktop-icon{position:absolute;width:104px;min-height:108px;text-align:center;cursor:grab;padding:9px 5px;border-radius:10px;font-size:13px;text-shadow:0 2px 5px #000;touch-action:none;user-select:none;z-index:1}
+.desktop-icon:hover{background:#ffffff22;outline:1px solid #ffffff25}
+.desktop-icon.dragging{cursor:grabbing;background:#ffffff25;z-index:4}
+.symbol{width:60px;height:60px;display:flex;align-items:center;justify-content:center;margin:0 auto 7px;border-radius:15px;overflow:hidden;background:#fff;box-shadow:0 4px 14px #0003;text-shadow:none}
+.symbol img{width:100%;height:100%;object-fit:contain;padding:7px}
+.tiktok{background:#080808}
+.soundcloud{background:#ff5500}
+.spotify{background:#1ed760}
+.info{background:#2674e8;color:white;font-size:32px}
 .taskbar{position:absolute;bottom:0;width:100%;height:52px;background:#10182dcc;backdrop-filter:blur(25px);border-top:1px solid #ffffff25;display:flex;align-items:center;justify-content:center;gap:9px;z-index:10}
 .taskbutton{border:0;background:transparent;color:white;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:19px}
 .taskbutton:hover{background:#ffffff22}
@@ -50,28 +51,39 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:white;height:100vh;o
 .startgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .startgrid button{border:0;background:#ffffff10;color:white;border-radius:10px;padding:15px 5px;cursor:pointer}
 .startgrid button:hover{background:#ffffff25}
-@media(max-width:600px){.desktop{padding:12px}.window{height:78vh}.titlebar{height:42px}.toolbar{gap:4px;padding:6px}.toolbar button{padding:9px 8px}.clock{display:none}.logo{font-size:36px}}
+@media(max-width:600px){.window{height:78vh}.titlebar{height:42px}.toolbar{gap:4px;padding:6px}.toolbar button{padding:9px 8px}.clock{display:none}.logo{font-size:36px}.desktop-icon{width:90px}.symbol{width:54px;height:54px}}
 </style>
 </head>
 <body>
 
-<div class="desktop">
-  <div class="desktop-icons">
-    <div class="desktop-icon" onclick="showBrowser()">
-      <span class="symbol info">🌐</span>dilBrowser
-    </div>
-    <div class="desktop-icon" onclick="about()">
-      <span class="symbol info">ℹ️</span>About dilBrowser
-    </div>
-    <div class="desktop-icon" onclick="openApp('https://www.tiktok.com/')">
-      <span class="symbol tiktok">♪</span>TikTok
-    </div>
-    <div class="desktop-icon" onclick="openApp('https://soundcloud.com/')">
-      <span class="symbol soundcloud">☁</span>SoundCloud
-    </div>
-    <div class="desktop-icon" onclick="openApp('https://open.spotify.com/')">
-      <span class="symbol spotify">≋</span>Spotify
-    </div>
+<div class="desktop" id="desktop">
+  <div class="desktop-icon" data-x="20" data-y="20" onclick="showBrowser()">
+    <span class="symbol info">🌐</span>dilBrowser
+  </div>
+
+  <div class="desktop-icon" data-x="20" data-y="145" onclick="about()">
+    <span class="symbol info">ℹ️</span>About dilBrowser
+  </div>
+
+  <div class="desktop-icon" data-x="20" data-y="270" onclick="openApp('https://www.tiktok.com/')">
+    <span class="symbol tiktok">
+      <img src="https://cdn.simpleicons.org/tiktok/FFFFFF" alt="TikTok logo">
+    </span>
+    TikTok
+  </div>
+
+  <div class="desktop-icon" data-x="20" data-y="395" onclick="openApp('https://soundcloud.com/')">
+    <span class="symbol soundcloud">
+      <img src="https://cdn.simpleicons.org/soundcloud/FFFFFF" alt="SoundCloud logo">
+    </span>
+    SoundCloud
+  </div>
+
+  <div class="desktop-icon" data-x="20" data-y="520" onclick="openApp('https://open.spotify.com/')">
+    <span class="symbol spotify">
+      <img src="https://cdn.simpleicons.org/spotify/000000" alt="Spotify logo">
+    </span>
+    Spotify
   </div>
 </div>
 
@@ -83,10 +95,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:white;height:100vh;o
     <button class="winbtn close" onclick="closeBrowser()">✕</button>
   </div>
   <div class="toolbar">
-    <button onclick="goBack()" title="Back">←</button>
-    <button onclick="goForward()" title="Forward">→</button>
-    <button onclick="reloadPage()" title="Reload">↻</button>
-    <button onclick="goHome()" title="Home">⌂</button>
+    <button onclick="goBack()">←</button>
+    <button onclick="goForward()">→</button>
+    <button onclick="reloadPage()">↻</button>
+    <button onclick="goHome()">⌂</button>
     <input id="address" placeholder="Search or enter a website address" onkeydown="if(event.key==='Enter')navigate(this.value)">
     <button onclick="navigate(document.getElementById('address').value)">Go</button>
   </div>
@@ -122,9 +134,9 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:white;height:100vh;o
 </div>
 
 <div class="taskbar">
-  <button class="taskbutton" onclick="toggleStart()" title="Start">⊞</button>
-  <button class="taskbutton" onclick="showBrowser()" title="dilBrowser">🌐</button>
-  <button class="taskbutton" onclick="goHome()" title="Home">⌂</button>
+  <button class="taskbutton" onclick="toggleStart()">⊞</button>
+  <button class="taskbutton" onclick="showBrowser()">🌐</button>
+  <button class="taskbutton" onclick="goHome()">⌂</button>
   <div class="clock" id="clock"></div>
 </div>
 
@@ -151,6 +163,7 @@ function normalizeUrl(value){
   if(!/^https?:\/\//i.test(value))value='https://'+value;
   return value;
 }
+
 function navigate(value,addHistory=true){
   const url=normalizeUrl(value);
   if(!url)return;
@@ -199,22 +212,17 @@ function maximize(){
       height:win.style.height,transform:win.style.transform,
       borderRadius:win.style.borderRadius
     };
-    win.style.left='0';
-    win.style.top='0';
-    win.style.width='100vw';
-    win.style.height='calc(100vh - 52px)';
-    win.style.transform='none';
-    win.style.borderRadius='0';
-    maximized=true;
+    win.style.left='0';win.style.top='0';win.style.width='100vw';
+    win.style.height='calc(100vh - 52px)';win.style.transform='none';
+    win.style.borderRadius='0';maximized=true;
   }else{
-    Object.assign(win.style,previousStyle);
-    maximized=false;
+    Object.assign(win.style,previousStyle);maximized=false;
   }
 }
 function toggleStart(){document.getElementById('startmenu').classList.toggle('hidden')}
 function hideStart(){document.getElementById('startmenu').classList.add('hidden')}
 function about(){
-  alert('dilBrowser\nA Windows-inspired desktop and browser demo. TikTok, SoundCloud, and Spotify open in new tabs. Some websites block embedding inside the browser window.');
+  alert('dilBrowser\nA Windows-inspired desktop and browser demo. Some websites block embedding.');
 }
 function updateClock(){
   const now=new Date();
@@ -225,6 +233,61 @@ function updateClock(){
 updateClock();
 setInterval(updateClock,1000);
 
+/* Movable desktop icons */
+const desktop=document.getElementById('desktop');
+let draggedIcon=null;
+let startX=0,startY=0,originX=0,originY=0,moved=false;
+
+document.querySelectorAll('.desktop-icon').forEach(icon=>{
+  icon.style.left=(Number(icon.dataset.x)||0)+'px';
+  icon.style.top=(Number(icon.dataset.y)||0)+'px';
+
+  icon.addEventListener('pointerdown',e=>{
+    if(e.button!==0)return;
+    draggedIcon=icon;
+    moved=false;
+    startX=e.clientX;
+    startY=e.clientY;
+    originX=parseFloat(icon.style.left)||0;
+    originY=parseFloat(icon.style.top)||0;
+    icon.classList.add('dragging');
+    icon.setPointerCapture(e.pointerId);
+  });
+
+  icon.addEventListener('pointermove',e=>{
+    if(draggedIcon!==icon)return;
+    const dx=e.clientX-startX;
+    const dy=e.clientY-startY;
+    if(Math.abs(dx)>4||Math.abs(dy)>4)moved=true;
+    if(!moved)return;
+    const maxX=Math.max(0,desktop.clientWidth-icon.offsetWidth);
+    const maxY=Math.max(0,desktop.clientHeight-icon.offsetHeight);
+    icon.style.left=Math.max(0,Math.min(maxX,originX+dx))+'px';
+    icon.style.top=Math.max(0,Math.min(maxY,originY+dy))+'px';
+  });
+
+  function stopDragging(){
+    if(draggedIcon!==icon)return;
+    icon.classList.remove('dragging');
+    if(moved){
+      icon.dataset.x=parseFloat(icon.style.left)||0;
+      icon.dataset.y=parseFloat(icon.style.top)||0;
+    }
+    draggedIcon=null;
+  }
+  icon.addEventListener('pointerup',stopDragging);
+  icon.addEventListener('pointercancel',stopDragging);
+
+  icon.addEventListener('click',e=>{
+    if(moved){
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      moved=false;
+    }
+  },true);
+});
+
+/* Drag the browser window */
 const titlebar=document.getElementById('titlebar');
 let dragging=false,offsetX=0,offsetY=0;
 titlebar.addEventListener('pointerdown',e=>{

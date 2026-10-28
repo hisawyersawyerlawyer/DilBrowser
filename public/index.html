@@ -3,612 +3,407 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>slhsProxty</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>dilBrowser</title>
 <style>
 :root {
-  --bg: #080d20;
-  --panel: rgba(17, 25, 51, .94);
-  --line: rgba(151, 180, 255, .17);
-  --blue: #4285ff;
-  --cyan: #31eaff;
-  --purple: #a66bff;
-  --text: #f4f7ff;
-  --muted: #9ba9ce;
+  --blue:#4779ff;
+  --purple:#9671ff;
+  --cyan:#41cfff;
+  --ink:#26324b;
+  --muted:#78849b;
+  --glass:rgba(255,255,255,.82);
+  --line:rgba(70,100,160,.15);
 }
-* { box-sizing: border-box; }
-[hidden] { display: none !important; }
-body {
-  margin: 0;
-  height: 100vh;
-  overflow: hidden;
-  color: var(--text);
-  font-family: "Segoe UI", Arial, sans-serif;
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0;height:100vh;overflow:hidden;
+  font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);
+  background:#f8faff;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.desktop{
+  position:relative;height:calc(100vh - 58px);overflow:hidden;
   background:
-    radial-gradient(ellipse at 16% 15%, #173e82 0%, transparent 40%),
-    radial-gradient(ellipse at 85% 80%, #392065 0%, transparent 42%),
-    linear-gradient(135deg, #060b19, #0b1530 55%, #080817);
+    radial-gradient(ellipse at 12% 20%,#dceaff 0,transparent 42%),
+    radial-gradient(ellipse at 88% 78%,#eee4ff 0,transparent 42%),
+    linear-gradient(135deg,#fff,#f5f8ff 55%,#fff);
+  isolation:isolate;
 }
-button, input { font: inherit; }
-button { color: inherit; }
-button:focus-visible, input:focus-visible {
-  outline: 2px solid var(--cyan);
-  outline-offset: 2px;
+.desktop:before,.desktop:after{
+  content:"";position:absolute;z-index:-1;pointer-events:none;
+  border-radius:50%;filter:blur(3px);
+  animation:float 16s ease-in-out infinite alternate;
 }
-.desktop {
-  height: calc(100vh - 58px);
-  position: relative;
-  overflow: hidden;
-  background-image:
-    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
-  background-size: 42px 42px;
+.desktop:before{
+  width:390px;height:390px;top:8%;right:8%;
+  background:radial-gradient(circle,#c7eaff50,transparent 70%);
 }
-.desktop::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 20%, #03071350 100%);
+.desktop:after{
+  width:450px;height:450px;bottom:-18%;left:18%;
+  background:radial-gradient(circle,#d8caff40,transparent 70%);
+  animation-delay:-8s;
 }
-.desktop-icon {
-  position: absolute;
-  z-index: 1;
-  width: 100px;
-  min-height: 104px;
-  padding: 10px 5px;
-  border: 1px solid transparent;
-  border-radius: 15px;
-  text-align: center;
-  font-size: 12px;
-  color: #f5f7ff;
-  text-shadow: 0 2px 7px #000;
-  cursor: grab;
-  user-select: none;
-  touch-action: none;
+@keyframes float{
+  0%{transform:translate3d(-10px,-8px,0) scale(1)}
+  50%{transform:translate3d(18px,12px,0) scale(1.05)}
+  100%{transform:translate3d(-5px,20px,0) scale(.97)}
 }
-.desktop-icon:hover {
-  background: #ffffff10;
-  border-color: #ffffff22;
-  backdrop-filter: blur(8px);
+@keyframes appear{
+  from{opacity:0;transform:translate(-50%,-47%) scale(.98)}
+  to{opacity:1;transform:translate(-50%,-50%) scale(1)}
 }
-.desktop-icon.dragging {
-  cursor: grabbing;
-  background: #5688ff25;
-  z-index: 4;
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(7px)}
+  to{opacity:1;transform:translateY(0)}
 }
-.symbol {
-  width: 57px;
-  height: 57px;
-  margin: 0 auto 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border: 1px solid #ffffff25;
-  border-radius: 17px;
-  background: linear-gradient(145deg,#293d68,#111b36);
-  box-shadow: 0 7px 22px #0005;
-  font-size: 25px;
-  text-shadow: none;
+@keyframes iconFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-3px)}
 }
-.symbol img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 10px;
+.desktop-icon{
+  position:absolute;width:100px;min-height:106px;padding:10px 5px;
+  border:1px solid transparent;border-radius:17px;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  color:#34415c;text-align:center;font-size:12px;
+  cursor:default;user-select:none;touch-action:pan-y;
+  transition:background .18s,border-color .18s,box-shadow .18s;
 }
-.tiktok { background: #111; }
-.soundcloud { background: #ff5500; }
-.spotify { background: #1ed760; }
-.gd {
-  background: linear-gradient(145deg,#21d7ff,#425cff 55%,#a64cff);
-  box-shadow: 0 0 22px #287fff35;
+.desktop-icon:hover{
+  background:#ffffffb8;border-color:#fff;
+  box-shadow:0 8px 25px #435b8610;
 }
-.gd img { padding: 2px; }
-.info { color: #a8d8ff; }
-.taskbar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 58px;
-  z-index: 20;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  border-top: 1px solid #ffffff18;
-  background: rgba(7, 12, 29, .84);
-  backdrop-filter: blur(28px);
+.desktop-icon.selected{
+  background:#dce8ffb5;border-color:#8db5ff80;
 }
-.taskbutton {
-  height: 42px;
-  min-width: 43px;
-  padding: 0 12px;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  background: transparent;
-  cursor: pointer;
-  font-size: 20px;
-  transition: background .15s, transform .15s;
+.symbol{
+  width:57px;height:57px;border-radius:17px;
+  display:grid;place-items:center;overflow:hidden;
+  border:1px solid #ffffffa8;
+  box-shadow:0 5px 15px #233a6416, inset 0 1px 0 #ffffff80;
+  font-size:26px;
+  transition:transform .2s,box-shadow .2s;
 }
-.taskbutton:hover {
-  background: #ffffff12;
-  border-color: #ffffff15;
+.desktop-icon:hover .symbol{
+  transform:translateY(-3px);
+  box-shadow:0 10px 20px #233a6420;
 }
-.taskbutton:active { transform: scale(.94); }
-.start-logo {
-  color: var(--cyan);
-  font-size: 25px;
+.symbol img{width:100%;height:100%;object-fit:contain;padding:9px}
+.info{background:linear-gradient(145deg,#bfe5ff,#7ca8ff);color:white}
+.tiktok{background:#15151a}
+.soundcloud{background:#ff7a32}
+.spotify{background:#1ed760}
+.gd{background:linear-gradient(145deg,#20d9ff,#5370ff 60%,#a45bff)}
+.gd img{padding:2px}
+.window{
+  position:absolute;z-index:5;left:50%;top:48%;
+  transform:translate(-50%,-50%);
+  width:min(1120px,95vw);height:min(720px,83vh);min-height:300px;
+  display:flex;flex-direction:column;overflow:hidden;
+  border:1px solid #fff;border-radius:20px;
+  background:rgba(255,255,255,.91);
+  box-shadow:0 28px 90px #283b641b,0 3px 15px #283b640c;
+  backdrop-filter:blur(30px);
 }
-.clock {
-  position: absolute;
-  right: 20px;
-  color: #d8e1ff;
-  text-align: right;
-  font-size: 11px;
-  line-height: 1.5;
+.window.hidden{display:none}
+.window.opening{animation:appear .24s ease-out}
+.window.maximized{
+  inset:0 0 58px;width:100%;height:auto;
+  transform:none;border-radius:0;
 }
-.window {
-  position: absolute;
-  z-index: 5;
-  left: 50%;
-  top: 47%;
-  transform: translate(-50%,-50%);
-  width: min(1120px, 95vw);
-  height: min(730px, 83vh);
-  min-height: 300px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid #a4baff30;
-  border-radius: 20px;
-  background: var(--panel);
-  box-shadow: 0 35px 120px #0009, 0 0 50px #315bff12;
-  backdrop-filter: blur(30px);
+.titlebar{
+  height:51px;flex-shrink:0;display:flex;align-items:center;gap:10px;
+  padding:0 13px;background:#ffffffd9;
+  border-bottom:1px solid var(--line);cursor:move;
 }
-.window.hidden { display: none; }
-.window.maximized {
-  inset: 0 0 58px 0;
-  width: 100%;
-  height: auto;
-  transform: none;
-  border-radius: 0;
+.brandmark{
+  width:29px;height:29px;display:grid;place-items:center;
+  border-radius:10px;background:linear-gradient(135deg,var(--cyan),var(--blue),var(--purple));
+  color:white;font-weight:900;
+  box-shadow:0 3px 8px #4779ff25;
 }
-.titlebar {
-  height: 53px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 0 14px;
-  border-bottom: 1px solid var(--line);
-  background: #121c38;
-  cursor: move;
+.title{flex:1;font-size:13px;font-weight:650;color:#35425e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.winbtn{
+  width:31px;height:31px;border:0;border-radius:9px;
+  color:#77839b;background:transparent;
 }
-.brandmark {
-  width: 29px;
-  height: 29px;
-  display: grid;
-  place-items: center;
-  border-radius: 9px;
-  background: linear-gradient(135deg,var(--cyan),var(--blue),var(--purple));
-  color: white;
-  font-size: 17px;
-  font-weight: 900;
+.winbtn:hover{background:#edf1fa;color:#26324b}
+.winbtn.close:hover{background:#ffe5e8;color:#d52c49}
+.toolbar{
+  min-height:59px;display:flex;align-items:center;gap:7px;
+  padding:9px 12px;border-bottom:1px solid var(--line);
+  background:#ffffffb5;
 }
-.title {
-  flex: 1;
-  overflow: hidden;
-  color: #edf2ff;
-  font-size: 13px;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.navbtn{
+  width:34px;height:35px;flex-shrink:0;border:0;border-radius:11px;
+  color:#667590;background:transparent;font-size:18px;
+  transition:background .16s,transform .16s;
 }
-.winbtn {
-  width: 32px;
-  height: 32px;
-  border: 0;
-  border-radius: 9px;
-  background: transparent;
-  color: #b6c4e8;
-  cursor: pointer;
+.navbtn:hover{background:#eaf0ff;color:#416ee8}
+.navbtn:active{transform:scale(.92)}
+.address-wrap{
+  flex:1;min-width:0;height:38px;display:flex;align-items:center;gap:8px;
+  padding:0 12px;border:1px solid #e0e6f1;border-radius:12px;
+  background:#f7f9fd;transition:border-color .2s,box-shadow .2s;
 }
-.winbtn:hover { background: #ffffff12; color: white; }
-.winbtn.close:hover { background: #e7475b; }
-.toolbar {
-  min-height: 61px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 10px 13px;
-  border-bottom: 1px solid var(--line);
-  background: #0e1730;
+.address-wrap:focus-within{border-color:#86aaff;box-shadow:0 0 0 3px #4779ff12}
+#address{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#35425e;font-size:12px}
+#address:focus-visible{outline:none}
+.go-btn,.search button{
+  height:36px;padding:0 16px;border:0;border-radius:11px;
+  color:white;font-size:12px;font-weight:650;
+  background:linear-gradient(120deg,#4e83ff,#8b69ef);
+  box-shadow:0 3px 8px #4779ff20;
+  transition:filter .2s,transform .2s;
 }
-.navbtn {
-  flex-shrink: 0;
-  width: 35px;
-  height: 35px;
-  border: 1px solid transparent;
-  border-radius: 11px;
-  background: #ffffff08;
-  color: #c6d4f6;
-  cursor: pointer;
-  font-size: 17px;
-}
-.navbtn:hover { background: #ffffff15; }
-.address-wrap {
-  min-width: 0;
-  flex: 1;
-  height: 39px;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 0 13px;
-  border: 1px solid #ffffff12;
-  border-radius: 13px;
-  background: #070d20;
-}
-.address-wrap:focus-within {
-  border-color: #4285ffbb;
-  box-shadow: 0 0 0 3px #4285ff16;
-}
-.lock { color: #72e3b4; font-size: 13px; }
-#address {
-  min-width: 0;
-  flex: 1;
-  height: 100%;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: white;
-  font-size: 12px;
-}
-#address:focus-visible { outline: none; }
-.go-btn {
-  height: 35px;
-  padding: 0 15px;
-  border: 0;
-  border-radius: 11px;
-  background: linear-gradient(135deg,#347dff,#7657ff);
-  color: white;
-  font-size: 12px;
-  font-weight: 650;
-  cursor: pointer;
-}
-.go-btn:hover { filter: brightness(1.14); }
-.page {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  background: #080d1b;
-}
-.home {
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 30px 22px;
-  text-align: center;
+.go-btn:hover,.search button:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.page{position:relative;flex:1;min-height:0;overflow:hidden;background:#fff}
+.home{
+  height:100%;overflow:auto;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:28px 20px;
   background:
-    radial-gradient(ellipse at 50% 25%,#1b3b7b66,transparent 52%),
-    linear-gradient(145deg,#0b132b,#10152e 65%,#14112c);
+    radial-gradient(ellipse at 50% 28%,#e9f1ff 0,transparent 55%),
+    linear-gradient(145deg,#fff,#f9fbff);
+  animation:fadeUp .35s ease-out;
 }
-.home-logo {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  margin-bottom: 10px;
-  font-size: clamp(32px,5vw,49px);
-  font-weight: 750;
-  letter-spacing: -2px;
+.home-logo{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.home-logo .brandmark{width:44px;height:44px;border-radius:14px;font-size:24px}
+.home-logo span:last-child{
+  font-size:clamp(32px,5vw,46px);font-weight:750;letter-spacing:-2px;
+  background:linear-gradient(100deg,#354e86,#548aff,#9a71ed);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.home-logo .brandmark {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  font-size: 27px;
+.subtitle{margin:0 0 27px;color:#8490a8;font-size:13px}
+.search{
+  width:min(590px,100%);display:flex;gap:8px;padding:6px;
+  border:1px solid #e5eaf5;border-radius:16px;background:#ffffffde;
+  box-shadow:0 8px 30px #415e9710;
+  transition:box-shadow .2s,border-color .2s;
 }
-.home-logo span:last-child {
-  background: linear-gradient(100deg,#fff,#9fdcff 55%,#bb9aff);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+.search:focus-within{border-color:#b4caff;box-shadow:0 8px 30px #4779ff15}
+.search input{flex:1;min-width:0;height:41px;padding:0 12px;border:0;outline:0;background:transparent;color:#34415c;font-size:13px}
+.search input:focus-visible{outline:none}
+.section-label{
+  width:min(590px,100%);margin:28px 0 12px;
+  color:#8b97ad;font-size:10px;font-weight:750;
+  letter-spacing:1.6px;text-align:left;text-transform:uppercase;
 }
-.subtitle {
-  margin: 0 0 29px;
-  color: var(--muted);
-  font-size: 13px;
+.links{width:min(590px,100%);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.app-card{
+  min-width:0;min-height:100px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:9px;
+  border:1px solid #e8edf6;border-radius:15px;
+  background:#ffffffc9;color:#43516d;
+  transition:transform .2s,box-shadow .2s,border-color .2s,background .2s;
 }
-.search {
-  width: min(610px,100%);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px;
-  border: 1px solid #9eb8ff27;
-  border-radius: 17px;
-  background: #070d20cc;
-  box-shadow: 0 12px 45px #0003;
+.app-card:hover{
+  transform:translateY(-3px);border-color:#cbd9ff;
+  background:#fff;box-shadow:0 9px 25px #304b8010;
 }
-.search input {
-  min-width: 0;
-  flex: 1;
-  height: 43px;
-  padding: 0 13px;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: white;
-  font-size: 13px;
+.app-icon{
+  width:37px;height:37px;display:grid;place-items:center;
+  border-radius:12px;background:#e9efff;font-size:19px;overflow:hidden;
 }
-.search input:focus-visible { outline: none; }
-.search button {
-  height: 41px;
-  padding: 0 19px;
-  border: 0;
-  border-radius: 12px;
-  background: linear-gradient(135deg,#3886ff,#8154ff);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 650;
+.app-icon img{width:100%;height:100%;object-fit:contain}
+.app-name{max-width:100%;padding:0 3px;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.home-foot{margin-top:26px;color:#a2adc1;font-size:10px}
+#viewer{width:100%;height:100%;display:block;border:0;background:white}
+.taskbar{
+  position:absolute;bottom:0;left:0;width:100%;height:58px;z-index:30;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  border-top:1px solid #e6ebf5;background:#ffffffd9;
+  backdrop-filter:blur(25px);box-shadow:0 -4px 25px #344b7407;
 }
-.section-label {
-  width: min(610px,100%);
-  margin: 30px 0 12px;
-  color: #8c9ec7;
-  text-align: left;
-  font-size: 10px;
-  font-weight: 750;
-  letter-spacing: 1.7px;
-  text-transform: uppercase;
+.taskbutton{
+  min-width:42px;height:42px;padding:0 11px;border:1px solid transparent;
+  border-radius:12px;background:transparent;color:#52617d;font-size:20px;
+  transition:background .18s,transform .18s;
 }
-.links {
-  width: min(610px,100%);
-  display: grid;
-  grid-template-columns: repeat(4,minmax(0,1fr));
-  gap: 10px;
+.taskbutton:hover{background:#eaf0ff}
+.taskbutton:active{transform:scale(.93)}
+.start-logo{color:#527eff;font-size:25px}
+.clock{position:absolute;right:18px;text-align:right;color:#687792;font-size:11px;line-height:1.5}
+.startmenu{
+  position:absolute;z-index:40;left:50%;bottom:68px;
+  transform:translateX(-50%);width:min(430px,94vw);padding:20px;
+  border:1px solid #fff;border-radius:21px;
+  background:#ffffffed;backdrop-filter:blur(25px);
+  box-shadow:0 20px 70px #334b761f;
+  animation:fadeUp .18s ease-out;
 }
-.app-card {
-  min-width: 0;
-  min-height: 105px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  border: 1px solid #ffffff12;
-  border-radius: 15px;
-  background: #ffffff06;
-  cursor: pointer;
-  transition: background .15s, border-color .15s, transform .15s;
+.startmenu.hidden{display:none}
+.start-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}
+.start-head strong{font-size:17px}
+.start-head small{color:#9aa5ba;font-size:10px}
+.startgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.startgrid button{
+  min-height:73px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:6px;border:1px solid transparent;
+  border-radius:13px;background:#f5f7fc;color:#53617d;font-size:11px;
+  transition:background .18s,border-color .18s;
 }
-.app-card:hover {
-  transform: translateY(-2px);
-  border-color: #729eff65;
-  background: #ffffff10;
+.startgrid button:hover{background:#eaf0ff;border-color:#d7e2ff}
+.start-icon{font-size:21px}
+.game-window{
+  position:absolute;z-index:12;left:50%;top:48%;
+  transform:translate(-50%,-50%);
+  width:min(1050px,94vw);height:min(700px,82vh);min-height:280px;
+  display:flex;flex-direction:column;overflow:hidden;
+  border:1px solid #fff;border-radius:19px;background:#fff;
+  box-shadow:0 28px 100px #273b602b,0 3px 12px #273b6010;
+  animation:appear .24s ease-out;
 }
-.app-icon {
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  border-radius: 12px;
-  background: #233c6b;
-  font-size: 20px;
+.game-window.hidden{display:none}
+.game-window.maximized{
+  inset:0 0 58px;width:100%;height:auto;transform:none;border-radius:0;
 }
-.app-icon img { width: 100%; height: 100%; object-fit: contain; }
-.app-name {
-  overflow: hidden;
-  max-width: 100%;
-  padding: 0 4px;
-  color: #dbe5ff;
-  font-size: 11px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.game-titlebar{
+  height:49px;flex-shrink:0;display:flex;align-items:center;gap:10px;
+  padding:0 12px;background:#fff;border-bottom:1px solid #e9edf5;cursor:move;
 }
-.home-foot {
-  margin-top: 28px;
-  color: #64769f;
-  font-size: 10px;
+.game-title{flex:1;font-size:13px;font-weight:650;color:#34415c}
+.game-dot{width:10px;height:10px;border-radius:4px;background:linear-gradient(135deg,#20d9ff,#6573ff,#b06cff)}
+.game-actions{display:flex;gap:4px}
+.game-actions button{
+  width:31px;height:31px;border:0;border-radius:9px;
+  background:transparent;color:#667590;
 }
-#viewer {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  background: #000;
+.game-actions button:hover{background:#edf2ff}
+.game-actions .game-close:hover{background:#ffe5e8;color:#d52c49}
+.game-body{position:relative;flex:1;min-height:0;background:#050812}
+#gameFrame{display:block;width:100%;height:100%;border:0;background:#050812}
+.game-fallback{
+  position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+  flex-direction:column;gap:12px;padding:25px;background:#080d1d;color:white;text-align:center;
 }
-.startmenu {
-  position: absolute;
-  z-index: 25;
-  left: 50%;
-  bottom: 69px;
-  transform: translateX(-50%);
-  width: min(440px,94vw);
-  padding: 22px;
-  border: 1px solid #9cb6ff30;
-  border-radius: 21px;
-  background: rgba(13,22,46,.96);
-  box-shadow: 0 25px 90px #0009;
-  backdrop-filter: blur(28px);
+.game-fallback.show{display:flex}
+.game-cube{
+  width:54px;height:54px;border:5px solid #d9faff;border-radius:8px;
+  background:linear-gradient(135deg,#1edbff,#4b62ff);
+  box-shadow:0 0 28px #2c7fff55;animation:iconFloat 2s ease-in-out infinite;
 }
-.startmenu.hidden { display: none; }
-.start-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
+.game-fallback p{max-width:360px;color:#aab9df;font-size:12px;line-height:1.6}
+.game-fallback button{
+  padding:10px 15px;border:0;border-radius:10px;background:#4779ff;color:white;
 }
-.start-head strong { font-size: 17px; }
-.start-head small { color: #8193bb; font-size: 10px; }
-.startgrid {
-  display: grid;
-  grid-template-columns: repeat(3,minmax(0,1fr));
-  gap: 9px;
+@media(max-width:600px){
+  .window{width:98vw;height:82vh;border-radius:14px}
+  .toolbar{gap:3px;padding:7px}
+  .navbtn{width:29px}
+  .go-btn{padding:0 10px}
+  .links{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .home{padding:18px 12px}
+  .clock{display:none}
+  .desktop-icon{width:88px}
+  .symbol{width:50px;height:50px}
+  .game-window{width:98vw;height:82vh;border-radius:14px}
 }
-.startgrid button {
-  min-height: 76px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  border: 1px solid transparent;
-  border-radius: 13px;
-  background: #ffffff08;
-  color: #dbe5ff;
-  cursor: pointer;
-  font-size: 11px;
-}
-.startgrid button:hover {
-  border-color: #729eff55;
-  background: #ffffff12;
-}
-.startgrid .start-icon { font-size: 21px; }
-@media(max-width:600px) {
-  .window {
-    top: 46%;
-    width: 98vw;
-    height: 82vh;
-    border-radius: 14px;
-  }
-  .titlebar { height: 45px; padding: 0 8px; gap: 7px; }
-  .toolbar { gap: 4px; padding: 7px; }
-  .navbtn { width: 29px; height: 34px; }
-  .go-btn { padding: 0 10px; }
-  .address-wrap { padding: 0 8px; }
-  .clock { display: none; }
-  .links { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .home { padding: 20px 13px; }
-  .desktop-icon { width: 88px; }
-  .symbol { width: 50px; height: 50px; }
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 </style>
 </head>
 <body>
 <div class="desktop" id="desktop">
-  <div class="desktop-icon" data-x="18" data-y="18" onclick="showBrowser()">
-    <span class="symbol info">🌐</span>dilBrowser
+  <div class="desktop-icon" data-x="18" data-y="18" data-app="browser" tabindex="0">
+    <span class="symbol info">🌐</span><span>dilBrowser</span>
   </div>
-  <div class="desktop-icon" data-x="18" data-y="132" onclick="about()">
-    <span class="symbol info">ⓘ</span>About dilBrowser
+  <div class="desktop-icon" data-x="18" data-y="132" data-app="about" tabindex="0">
+    <span class="symbol info">ⓘ</span><span>About</span>
   </div>
-  <div class="desktop-icon" data-x="18" data-y="246" onclick="openApp('https://www.tiktok.com/')">
-    <span class="symbol tiktok"><img src="https://cdn.simpleicons.org/tiktok/FFFFFF" alt="TikTok"></span>TikTok
+  <div class="desktop-icon" data-x="18" data-y="246" data-url="https://www.tiktok.com/" tabindex="0">
+    <span class="symbol tiktok"><img src="https://cdn.simpleicons.org/tiktok/FFFFFF" alt=""></span><span>TikTok</span>
   </div>
-  <div class="desktop-icon" data-x="18" data-y="360" onclick="openApp('https://soundcloud.com/')">
-    <span class="symbol soundcloud"><img src="https://cdn.simpleicons.org/soundcloud/FFFFFF" alt="SoundCloud"></span>SoundCloud
+  <div class="desktop-icon" data-x="18" data-y="360" data-url="https://soundcloud.com/" tabindex="0">
+    <span class="symbol soundcloud"><img src="https://cdn.simpleicons.org/soundcloud/FFFFFF" alt=""></span><span>SoundCloud</span>
   </div>
-  <div class="desktop-icon" data-x="18" data-y="474" onclick="openApp('https://open.spotify.com/')">
-    <span class="symbol spotify"><img src="https://cdn.simpleicons.org/spotify/000000" alt="Spotify"></span>Spotify
+  <div class="desktop-icon" data-x="18" data-y="474" data-url="https://open.spotify.com/" tabindex="0">
+    <span class="symbol spotify"><img src="https://cdn.simpleicons.org/spotify/000000" alt=""></span><span>Spotify</span>
   </div>
-  <div class="desktop-icon" data-x="132" data-y="18" onclick="launchGeometryDash()">
-    <span class="symbol gd"><img src="https://cdn.jsdelivr.net/gh/Ale7208/Geometry-Dash-webport@main/favicon.ico" alt="Geometry Dash" onerror="this.style.display='none';this.parentElement.textContent='▣'"></span>Geometry Dash
+  <div class="desktop-icon" data-x="132" data-y="18" data-app="game" tabindex="0">
+    <span class="symbol gd"><img src="https://cdn.jsdelivr.net/gh/Ale7208/Geometry-Dash-webport@main/favicon.ico" alt="Geometry Dash" onerror="this.style.display='none';this.parentElement.textContent='▣'"></span><span>Geometry Dash</span>
   </div>
 </div>
 
-<div class="window" id="window">
+<!-- Main browser window -->
+<div class="window opening" id="window">
   <div class="titlebar" id="titlebar">
     <span class="brandmark">D</span>
     <span class="title" id="windowtitle">dilBrowser</span>
-    <button class="winbtn" onclick="minimize()" aria-label="Minimize">—</button>
-    <button class="winbtn" onclick="maximize()" aria-label="Maximize">□</button>
+    <button class="winbtn" onclick="minimizeBrowser()" aria-label="Minimize">—</button>
+    <button class="winbtn" onclick="maximizeBrowser()" aria-label="Maximize">□</button>
     <button class="winbtn close" onclick="closeBrowser()" aria-label="Close">✕</button>
   </div>
-
   <div class="toolbar">
     <button class="navbtn" onclick="goBack()" title="Back">←</button>
     <button class="navbtn" onclick="goForward()" title="Forward">→</button>
     <button class="navbtn" onclick="reloadPage()" title="Reload">↻</button>
     <button class="navbtn" onclick="goHome()" title="Home">⌂</button>
     <div class="address-wrap">
-      <span class="lock">◆</span>
-      <input id="address" placeholder="Search or enter a website address"
-        autocomplete="off"
-        onkeydown="if(event.key==='Enter')navigate(this.value)">
+      <span style="color:#56b99a;font-size:12px">◆</span>
+      <input id="address" placeholder="Search or enter a website address" autocomplete="off" onkeydown="if(event.key==='Enter')navigate(this.value)">
     </div>
     <button class="go-btn" onclick="navigate(document.getElementById('address').value)">Go</button>
   </div>
-
   <div class="page">
     <div class="home" id="home">
-      <div class="home-logo">
-        <span class="brandmark">D</span>
-        <span>dilBrowser</span>
-      </div>
-      <p class="subtitle">Your own little corner of the internet.</p>
-
+      <div class="home-logo"><span class="brandmark">D</span><span>dilBrowser</span></div>
+      <p class="subtitle">A fresh little corner of the internet.</p>
       <div class="search">
-        <input id="homesearch" placeholder="Search or enter a website..."
-          onkeydown="if(event.key==='Enter')navigate(this.value)">
+        <input id="homesearch" placeholder="Search or enter a website..." onkeydown="if(event.key==='Enter')navigate(this.value)">
         <button onclick="navigate(document.getElementById('homesearch').value)">Search ↗</button>
       </div>
-
       <div class="section-label">Your apps</div>
       <div class="links">
-        <button class="app-card" onclick="launchGeometryDash()">
-          <span class="app-icon gd">
-            <img src="https://cdn.jsdelivr.net/gh/Ale7208/Geometry-Dash-webport@main/favicon.ico" alt="">
-          </span>
-          <span class="app-name">Geometry Dash</span>
-        </button>
-        <button class="app-card" onclick="openApp('https://www.tiktok.com/')">
-          <span class="app-icon" style="background:#171717">♪</span>
-          <span class="app-name">TikTok</span>
-        </button>
-        <button class="app-card" onclick="openApp('https://soundcloud.com/')">
-          <span class="app-icon" style="background:#ff5500">☁</span>
-          <span class="app-name">SoundCloud</span>
-        </button>
-        <button class="app-card" onclick="openApp('https://open.spotify.com/')">
-          <span class="app-icon" style="background:#1ed760;color:#071a0b">≋</span>
-          <span class="app-name">Spotify</span>
-        </button>
-        <button class="app-card" onclick="navigate('https://www.wikipedia.org/')">
-          <span class="app-icon">📚</span>
-          <span class="app-name">Wikipedia</span>
-        </button>
-        <button class="app-card" onclick="navigate('https://developer.mozilla.org/')">
-          <span class="app-icon">⌘</span>
-          <span class="app-name">MDN Docs</span>
-        </button>
-        <button class="app-card" onclick="navigate('https://www.google.com/')">
-          <span class="app-icon">🔎</span>
-          <span class="app-name">Google</span>
-        </button>
-        <button class="app-card" onclick="about()">
-          <span class="app-icon">ⓘ</span>
-          <span class="app-name">About</span>
-        </button>
+        <button class="app-card" onclick="launchGeometryDash()"><span class="app-icon gd"><img src="https://cdn.jsdelivr.net/gh/Ale7208/Geometry-Dash-webport@main/favicon.ico" alt=""></span><span class="app-name">Geometry Dash</span></button>
+        <button class="app-card" onclick="navigate('https://www.tiktok.com/')"><span class="app-icon" style="background:#17171b;color:white">♪</span><span class="app-name">TikTok</span></button>
+        <button class="app-card" onclick="navigate('https://soundcloud.com/')"><span class="app-icon" style="background:#fff0e5;color:#f70">☁</span><span class="app-name">SoundCloud</span></button>
+        <button class="app-card" onclick="navigate('https://open.spotify.com/')"><span class="app-icon" style="background:#e2ffed;color:#14994b">≋</span><span class="app-name">Spotify</span></button>
+        <button class="app-card" onclick="navigate('https://www.wikipedia.org/')"><span class="app-icon">📚</span><span class="app-name">Wikipedia</span></button>
+        <button class="app-card" onclick="navigate('https://developer.mozilla.org/')"><span class="app-icon">⌘</span><span class="app-name">MDN Docs</span></button>
+        <button class="app-card" onclick="navigate('https://www.google.com/')"><span class="app-icon">🔎</span><span class="app-name">Google</span></button>
+        <button class="app-card" onclick="about()"><span class="app-icon">ⓘ</span><span class="app-name">About</span></button>
       </div>
-      <div class="home-foot">dilBrowser · A little desktop, a lot of possibilities.</div>
+      <div class="home-foot">dilBrowser · Your desktop, your way.</div>
     </div>
+    <iframe id="viewer" title="Website viewer" hidden referrerpolicy="no-referrer" allow="fullscreen; autoplay; gamepad"></iframe>
+  </div>
+</div>
 
-    <iframe id="viewer" title="Website viewer" hidden
-      referrerpolicy="no-referrer"
-      allow="fullscreen; autoplay; gamepad; clipboard-read; clipboard-write">
-    </iframe>
+<!-- Geometry Dash runs in its own desktop app window -->
+<div class="game-window hidden" id="gameWindow">
+  <div class="game-titlebar" id="gameTitlebar">
+    <span class="game-dot"></span>
+    <span class="game-title">Geometry Dash</span>
+    <div class="game-actions">
+      <button onclick="minimizeGame()" aria-label="Minimize">—</button>
+      <button onclick="maximizeGame()" aria-label="Maximize">□</button>
+      <button class="game-close" onclick="closeGame()" aria-label="Close">✕</button>
+    </div>
+  </div>
+  <div class="game-body">
+    <iframe id="gameFrame" title="Geometry Dash" allow="fullscreen; autoplay; gamepad" referrerpolicy="no-referrer"></iframe>
+    <div class="game-fallback" id="gameFallback">
+      <div class="game-cube"></div>
+      <strong>Geometry Dash</strong>
+      <p>The game host may block embedded play. You can try reloading, or open the game website directly if it refuses to load here.</p>
+      <button onclick="reloadGame()">Reload game</button>
+      <button onclick="openGameWebsite()">Open game website</button>
+    </div>
   </div>
 </div>
 
 <div class="startmenu hidden" id="startmenu">
-  <div class="start-head">
-    <strong>Start</strong>
-    <small>dilBrowser apps</small>
-  </div>
+  <div class="start-head"><strong>Start</strong><small>dilBrowser apps</small></div>
   <div class="startgrid">
     <button onclick="goHome();hideStart()"><span class="start-icon">⌂</span>Home</button>
     <button onclick="launchGeometryDash();hideStart()"><span class="start-icon">▣</span>Geometry Dash</button>
-    <button onclick="openApp('https://www.tiktok.com/');hideStart()"><span class="start-icon">♪</span>TikTok</button>
-    <button onclick="openApp('https://soundcloud.com/');hideStart()"><span class="start-icon">☁</span>SoundCloud</button>
-    <button onclick="openApp('https://open.spotify.com/');hideStart()"><span class="start-icon">≋</span>Spotify</button>
+    <button onclick="navigate('https://www.tiktok.com/');hideStart()"><span class="start-icon">♪</span>TikTok</button>
+    <button onclick="navigate('https://soundcloud.com/');hideStart()"><span class="start-icon">☁</span>SoundCloud</button>
+    <button onclick="navigate('https://open.spotify.com/');hideStart()"><span class="start-icon">≋</span>Spotify</button>
     <button onclick="navigate('https://www.wikipedia.org/');hideStart()"><span class="start-icon">📚</span>Wikipedia</button>
     <button onclick="navigate('https://www.google.com/');hideStart()"><span class="start-icon">🔎</span>Google</button>
     <button onclick="about();hideStart()"><span class="start-icon">ⓘ</span>About</button>
@@ -618,243 +413,246 @@ button:focus-visible, input:focus-visible {
 <div class="taskbar">
   <button class="taskbutton start-logo" onclick="toggleStart()" title="Start">⊞</button>
   <button class="taskbutton" onclick="showBrowser()" title="dilBrowser">🌐</button>
+  <button class="taskbutton" onclick="launchGeometryDash()" title="Geometry Dash">▣</button>
   <button class="taskbutton" onclick="goHome()" title="Home">⌂</button>
   <div class="clock" id="clock"></div>
 </div>
 
 <script>
-const win = document.getElementById('window');
-const home = document.getElementById('home');
-const viewer = document.getElementById('viewer');
-const address = document.getElementById('address');
-const windowTitle = document.getElementById('windowtitle');
+const win=document.getElementById('window');
+const home=document.getElementById('home');
+const viewer=document.getElementById('viewer');
+const address=document.getElementById('address');
+const windowTitle=document.getElementById('windowtitle');
+const gameWindow=document.getElementById('gameWindow');
+const gameFrame=document.getElementById('gameFrame');
+const gameFallback=document.getElementById('gameFallback');
 
-const geometryURL = 'https://truffled.lol/games/geo/index.html';
-const truffledURL = 'https://truffled.lol/';
+const geometryURL='https://truffled.lol/games/geo/index.html';
+const truffledURL='https://truffled.lol/';
 
-let historyList = [];
-let historyIndex = -1;
-let maximized = false;
-let previousStyle = {};
+let historyList=[],historyIndex=-1;
+let browserMax=false,gameMax=false;
+let browserRestore={},gameRestore={};
 
-function openApp(url) {
-  window.open(url, '_blank', 'noopener,noreferrer');
-}
-
-function normalizeUrl(value) {
-  value = value.trim();
-  if (!value) return '';
-
-  if (/\s/.test(value) || !value.includes('.')) {
-    return 'https://www.google.com/search?q=' + encodeURIComponent(value);
-  }
-
-  if (!/^https?:\/\//i.test(value)) value = 'https://' + value;
+function normalizeUrl(value){
+  value=value.trim();
+  if(!value)return '';
+  if(/\s/.test(value)||!value.includes('.'))
+    return 'https://www.google.com/search?q='+encodeURIComponent(value);
+  if(!/^https?:\/\//i.test(value))value='https://'+value;
   return value;
 }
 
-function navigate(value, addHistory = true, pageTitle = 'dilBrowser') {
-  const url = normalizeUrl(value);
-  if (!url) return;
-
-  if (addHistory) {
-    historyList = historyList.slice(0, historyIndex + 1);
-    historyList.push({ url, title: pageTitle });
-    historyIndex = historyList.length - 1;
+function navigate(value,addHistory=true){
+  const url=normalizeUrl(value);
+  if(!url)return;
+  if(addHistory){
+    historyList=historyList.slice(0,historyIndex+1);
+    historyList.push(url);
+    historyIndex=historyList.length-1;
   }
-
-  address.value = url;
-  document.getElementById('homesearch').value = value;
-  home.hidden = true;
-  viewer.hidden = false;
-  viewer.src = url;
-  windowTitle.textContent = pageTitle;
+  address.value=url;
+  document.getElementById('homesearch').value=value;
+  home.hidden=true;
+  viewer.hidden=false;
+  viewer.src=url;
+  windowTitle.textContent='dilBrowser';
   showBrowser();
   hideStart();
 }
 
-function launchGeometryDash() {
-  navigate(geometryURL, true, 'Geometry Dash');
-}
-
-function goBack() {
-  if (historyIndex <= 0) return;
+function goBack(){
+  if(historyIndex<=0)return;
   historyIndex--;
-  const item = historyList[historyIndex];
-  navigate(item.url, false, item.title);
+  navigate(historyList[historyIndex],false);
 }
-
-function goForward() {
-  if (historyIndex >= historyList.length - 1) return;
+function goForward(){
+  if(historyIndex>=historyList.length-1)return;
   historyIndex++;
-  const item = historyList[historyIndex];
-  navigate(item.url, false, item.title);
+  navigate(historyList[historyIndex],false);
 }
-
-function reloadPage() {
-  if (!viewer.hidden && address.value) {
-    viewer.src = address.value;
-  } else {
-    goHome();
-  }
+function reloadPage(){
+  if(!viewer.hidden&&address.value)viewer.src=address.value;
+  else goHome();
 }
-
-function goHome() {
-  address.value = '';
-  viewer.src = 'about:blank';
-  viewer.hidden = true;
-  home.hidden = false;
-  windowTitle.textContent = 'dilBrowser';
+function goHome(){
+  address.value='';
+  viewer.src='about:blank';
+  viewer.hidden=true;
+  home.hidden=false;
+  windowTitle.textContent='dilBrowser';
   showBrowser();
   hideStart();
 }
-
-function showBrowser() {
+function showBrowser(){
   win.classList.remove('hidden');
+  win.classList.remove('opening');
+  void win.offsetWidth;
+  win.classList.add('opening');
 }
-
-function closeBrowser() {
-  win.classList.add('hidden');
-  hideStart();
-}
-
-function minimize() {
-  win.classList.add('hidden');
-}
-
-function maximize() {
-  if (!maximized) {
-    previousStyle = {
-      left: win.style.left,
-      top: win.style.top,
-      width: win.style.width,
-      height: win.style.height,
-      transform: win.style.transform
-    };
+function closeBrowser(){win.classList.add('hidden');hideStart()}
+function minimizeBrowser(){win.classList.add('hidden')}
+function maximizeBrowser(){
+  if(!browserMax){
+    browserRestore={left:win.style.left,top:win.style.top,width:win.style.width,height:win.style.height,transform:win.style.transform};
     win.classList.add('maximized');
-    win.style.left = '';
-    win.style.top = '';
-    win.style.width = '';
-    win.style.height = '';
-    win.style.transform = '';
-    maximized = true;
-  } else {
+    win.style.left=win.style.top=win.style.width=win.style.height=win.style.transform='';
+    browserMax=true;
+  }else{
     win.classList.remove('maximized');
-    Object.assign(win.style, previousStyle);
-    maximized = false;
+    Object.assign(win.style,browserRestore);
+    browserMax=false;
   }
 }
 
-function toggleStart() {
-  document.getElementById('startmenu').classList.toggle('hidden');
+function launchGeometryDash(){
+  gameWindow.classList.remove('hidden');
+  gameWindow.style.zIndex=String(++topZ);
+  hideStart();
+  if(!gameFrame.dataset.loaded){
+    gameFrame.src=geometryURL;
+    gameFrame.dataset.loaded='true';
+  }
+}
+function closeGame(){
+  gameWindow.classList.add('hidden');
+  gameFallback.classList.remove('show');
+}
+function minimizeGame(){gameWindow.classList.add('hidden')}
+function reloadGame(){
+  gameFallback.classList.remove('show');
+  gameFrame.src=geometryURL;
+  gameFrame.dataset.loaded='true';
+}
+function openGameWebsite(){
+  // Opens the official host from an explicit user action.
+  window.open(geometryURL,'_blank','noopener,noreferrer');
+}
+function maximizeGame(){
+  if(!gameMax){
+    gameRestore={left:gameWindow.style.left,top:gameWindow.style.top,width:gameWindow.style.width,height:gameWindow.style.height,transform:gameWindow.style.transform};
+    gameWindow.classList.add('maximized');
+    gameWindow.style.left=gameWindow.style.top=gameWindow.style.width=gameWindow.style.height=gameWindow.style.transform='';
+    gameMax=true;
+  }else{
+    gameWindow.classList.remove('maximized');
+    Object.assign(gameWindow.style,gameRestore);
+    gameMax=false;
+  }
+}
+function toggleStart(){document.getElementById('startmenu').classList.toggle('hidden')}
+function hideStart(){document.getElementById('startmenu').classList.add('hidden')}
+function about(){
+  alert('dilBrowser\n\nA clean, animated desktop-style web app.\n\nDouble-click desktop icons to open them. Geometry Dash has its own app window. Some sites may block embedded play.');
 }
 
-function hideStart() {
-  document.getElementById('startmenu').classList.add('hidden');
-}
-
-function about() {
-  alert(
-    'dilBrowser\n\n' +
-    'A custom desktop-style web experience.\n\n' +
-    'Geometry Dash loads inside the browser window. ' +
-    'Some websites may block embedding, which this page cannot override.'
-  );
-}
-
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clock').innerHTML =
-    now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) +
-    '<br>' + now.toLocaleDateString();
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').innerHTML=
+    now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+
+    '<br>'+now.toLocaleDateString();
 }
 updateClock();
-setInterval(updateClock, 1000);
+setInterval(updateClock,1000);
 
-// Make desktop icons draggable.
-const desktop = document.getElementById('desktop');
-let draggedIcon = null;
-let startX = 0, startY = 0, originX = 0, originY = 0, moved = false;
+// Double-click desktop icons to open. Single-click only selects.
+document.querySelectorAll('.desktop-icon').forEach(icon=>{
+  icon.style.left=(Number(icon.dataset.x)||0)+'px';
+  icon.style.top=(Number(icon.dataset.y)||0)+'px';
+  let lastTap=0;
 
-document.querySelectorAll('.desktop-icon').forEach(icon => {
-  icon.style.left = (Number(icon.dataset.x) || 0) + 'px';
-  icon.style.top = (Number(icon.dataset.y) || 0) + 'px';
+  icon.addEventListener('click',()=>{
+    document.querySelectorAll('.desktop-icon').forEach(el=>el.classList.remove('selected'));
+    icon.classList.add('selected');
+  });
 
-  icon.addEventListener('pointerdown', event => {
-    if (event.button !== 0) return;
-    draggedIcon = icon;
-    moved = false;
-    startX = event.clientX;
-    startY = event.clientY;
-    originX = parseFloat(icon.style.left) || 0;
-    originY = parseFloat(icon.style.top) || 0;
-    icon.classList.add('dragging');
+  icon.addEventListener('dblclick',()=>activateIcon(icon));
+
+  // Support double-tap on touchscreens.
+  icon.addEventListener('pointerup',event=>{
+    if(event.pointerType!=='touch')return;
+    const now=Date.now();
+    if(now-lastTap<350)activateIcon(icon);
+    lastTap=now;
+  });
+
+  icon.addEventListener('keydown',event=>{
+    if(event.key==='Enter')activateIcon(icon);
+  });
+});
+
+function activateIcon(icon){
+  if(icon.dataset.app==='game')launchGeometryDash();
+  else if(icon.dataset.app==='browser')showBrowser();
+  else if(icon.dataset.app==='about')about();
+  else if(icon.dataset.url)navigate(icon.dataset.url);
+}
+
+// Drag desktop icons without confusing dragging with double-clicking.
+let draggedIcon=null,startX=0,startY=0,originX=0,originY=0,moved=false;
+document.querySelectorAll('.desktop-icon').forEach(icon=>{
+  icon.addEventListener('pointerdown',event=>{
+    if(event.button!==0)return;
+    draggedIcon=icon;moved=false;
+    startX=event.clientX;startY=event.clientY;
+    originX=parseFloat(icon.style.left)||0;
+    originY=parseFloat(icon.style.top)||0;
     icon.setPointerCapture(event.pointerId);
   });
-
-  icon.addEventListener('pointermove', event => {
-    if (draggedIcon !== icon) return;
-
-    const dx = event.clientX - startX;
-    const dy = event.clientY - startY;
-    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
-    if (!moved) return;
-
-    const maxX = Math.max(0, desktop.clientWidth - icon.offsetWidth);
-    const maxY = Math.max(0, desktop.clientHeight - icon.offsetHeight);
-
-    icon.style.left = Math.max(0, Math.min(maxX, originX + dx)) + 'px';
-    icon.style.top = Math.max(0, Math.min(maxY, originY + dy)) + 'px';
+  icon.addEventListener('pointermove',event=>{
+    if(draggedIcon!==icon)return;
+    const dx=event.clientX-startX,dy=event.clientY-startY;
+    if(Math.abs(dx)>5||Math.abs(dy)>5)moved=true;
+    if(!moved)return;
+    const maxX=Math.max(0,desktop.clientWidth-icon.offsetWidth);
+    const maxY=Math.max(0,desktop.clientHeight-icon.offsetHeight);
+    icon.style.left=Math.max(0,Math.min(maxX,originX+dx))+'px';
+    icon.style.top=Math.max(0,Math.min(maxY,originY+dy))+'px';
   });
-
-  function stopDragging() {
-    if (draggedIcon !== icon) return;
-    icon.classList.remove('dragging');
-    draggedIcon = null;
-  }
-
-  icon.addEventListener('pointerup', stopDragging);
-  icon.addEventListener('pointercancel', stopDragging);
-
-  icon.addEventListener('click', event => {
-    if (moved) {
-      event.stopImmediatePropagation();
-      event.preventDefault();
-      moved = false;
+  function stopDrag(){
+    if(draggedIcon!==icon)return;
+    if(moved){
+      icon.dataset.x=parseFloat(icon.style.left)||0;
+      icon.dataset.y=parseFloat(icon.style.top)||0;
+      // Prevent a drag from accidentally activating the icon.
+      icon.dataset.justDragged='true';
+      setTimeout(()=>delete icon.dataset.justDragged,250);
     }
-  }, true);
+    draggedIcon=null;
+  }
+  icon.addEventListener('pointerup',stopDrag);
+  icon.addEventListener('pointercancel',stopDrag);
+  icon.addEventListener('dblclick',event=>{
+    if(icon.dataset.justDragged==='true')event.preventDefault();
+  },true);
 });
 
-// Allow dragging the browser window by its title bar.
-const titlebar = document.getElementById('titlebar');
-let draggingWindow = false;
-let offsetX = 0, offsetY = 0;
-
-titlebar.addEventListener('pointerdown', event => {
-  if (event.target.closest('button') || maximized) return;
-
-  draggingWindow = true;
-  const rect = win.getBoundingClientRect();
-  offsetX = event.clientX - rect.left;
-  offsetY = event.clientY - rect.top;
-  titlebar.setPointerCapture(event.pointerId);
-});
-
-titlebar.addEventListener('pointermove', event => {
-  if (!draggingWindow) return;
-  win.style.left = (event.clientX - offsetX) + 'px';
-  win.style.top = (event.clientY - offsetY) + 'px';
-  win.style.transform = 'none';
-});
-
-titlebar.addEventListener('pointerup', () => draggingWindow = false);
-titlebar.addEventListener('pointercancel', () => draggingWindow = false);
-
-// Make the logo in the embedded game navigate within the same iframe.
-viewer.addEventListener('load', () => {
-  // Cross-origin pages cannot be inspected or modified by this page.
-  // The supplied game's own logo link may therefore still open a new tab.
-});
+// Drag the main browser window by its title bar.
+function makeDraggable(element,bar,isMaximized){
+  let dragging=false,offsetX=0,offsetY=0;
+  bar.addEventListener('pointerdown',event=>{
+    if(event.target.closest('button')||isMaximized())return;
+    dragging=true;
+    const rect=element.getBoundingClientRect();
+    offsetX=event.clientX-rect.left;
+    offsetY=event.clientY-rect.top;
+    bar.setPointerCapture(event.pointerId);
+  });
+  bar.addEventListener('pointermove',event=>{
+    if(!dragging||isMaximized())return;
+    element.style.left=(event.clientX-offsetX)+'px';
+    element.style.top=(event.clientY-offsetY)+'px';
+    element.style.transform='none';
+  });
+  bar.addEventListener('pointerup',()=>dragging=false);
+  bar.addEventListener('pointercancel',()=>dragging=false);
+}
+let topZ=12;
+makeDraggable(win,document.getElementById('titlebar'),()=>browserMax);
+makeDraggable(gameWindow,document.getElementById('gameTitlebar'),()=>gameMax);
+gameWindow.addEventListener('pointerdown',()=>gameWindow.style.zIndex=String(++topZ));
+win.addEventListener('pointerdown',()=>win.style.zIndex=String(++topZ));
 </script>
 </body>
 </html>

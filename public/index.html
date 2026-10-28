@@ -8,15 +8,20 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:white;height:100vh;overflow:hidden;background:radial-gradient(ellipse at 20% 20%,#3478db 0%,transparent 45%),radial-gradient(ellipse at 80% 80%,#673ab7 0%,transparent 45%),linear-gradient(135deg,#07162f,#101a40 55%,#030817)}
-.desktop{height:calc(100vh - 52px);padding:28px;display:flex;flex-direction:column;align-items:flex-start;gap:24px}
-.desktop-icon{width:100px;text-align:center;cursor:pointer;padding:10px;border-radius:8px;font-size:13px;text-shadow:0 2px 5px #000}
-.desktop-icon:hover{background:#ffffff20}
-.desktop-icon .symbol{font-size:36px;display:block;margin-bottom:8px}
-.taskbar{position:absolute;bottom:0;width:100%;height:52px;background:#10182dcc;backdrop-filter:blur(25px);border-top:1px solid #ffffff25;display:flex;align-items:center;justify-content:center;gap:9px}
+.desktop{height:calc(100vh - 52px);padding:24px;display:flex;flex-direction:column;align-items:flex-start;gap:22px;overflow:auto}
+.desktop-icons{display:grid;grid-template-columns:repeat(2,90px);gap:12px 10px}
+.desktop-icon{width:90px;min-height:94px;text-align:center;cursor:pointer;padding:10px 4px;border-radius:10px;font-size:12px;text-shadow:0 2px 5px #000}
+.desktop-icon:hover{background:#ffffff25;outline:1px solid #ffffff30}
+.symbol{width:52px;height:52px;display:flex;align-items:center;justify-content:center;margin:0 auto 7px;border-radius:14px;font-size:29px;text-shadow:none;box-shadow:0 4px 14px #0003}
+.tiktok{background:#101010;color:white}
+.soundcloud{background:#ff6a18;color:white}
+.spotify{background:#1ed760;color:#071b0e}
+.info{background:#2674e8;color:white}
+.taskbar{position:absolute;bottom:0;width:100%;height:52px;background:#10182dcc;backdrop-filter:blur(25px);border-top:1px solid #ffffff25;display:flex;align-items:center;justify-content:center;gap:9px;z-index:10}
 .taskbutton{border:0;background:transparent;color:white;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:19px}
 .taskbutton:hover{background:#ffffff22}
 .clock{position:absolute;right:18px;font-size:12px;text-align:right;line-height:1.5}
-.window{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:min(1000px,94vw);height:min(650px,78vh);min-height:300px;background:#17233aee;border:1px solid #ffffff40;border-radius:12px;overflow:hidden;box-shadow:0 25px 100px #0008;display:flex;flex-direction:column}
+.window{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:min(1000px,94vw);height:min(650px,78vh);min-height:300px;background:#17233aee;border:1px solid #ffffff40;border-radius:12px;overflow:hidden;box-shadow:0 25px 100px #0008;display:flex;flex-direction:column;z-index:5}
 .window.hidden{display:none}
 .titlebar{height:48px;display:flex;align-items:center;padding:0 12px;background:#202d43;gap:10px;flex-shrink:0;cursor:move}
 .title{flex:1;font-size:14px}
@@ -39,7 +44,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:white;height:100vh;o
 .links button{border:1px solid #dbe2ef;background:white;color:#334155;padding:12px 15px;border-radius:12px;cursor:pointer}
 .links button:hover{background:#e8efff}
 #viewer{width:100%;height:100%;border:0;background:white}
-.startmenu{position:absolute;bottom:62px;left:50%;transform:translateX(-50%);width:min(420px,94vw);padding:22px;border:1px solid #ffffff35;border-radius:16px;background:#18243aee;backdrop-filter:blur(25px);box-shadow:0 20px 70px #0007}
+.startmenu{position:absolute;bottom:62px;left:50%;transform:translateX(-50%);width:min(420px,94vw);padding:22px;border:1px solid #ffffff35;border-radius:16px;background:#18243aee;backdrop-filter:blur(25px);box-shadow:0 20px 70px #0007;z-index:20}
 .startmenu.hidden{display:none}
 .startmenu h3{margin:0 0 14px}
 .startgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -49,9 +54,25 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:white;height:100vh;o
 </style>
 </head>
 <body>
+
 <div class="desktop">
-  <div class="desktop-icon" onclick="showBrowser()"><span class="symbol">🌐</span>dilBrowser</div>
-  <div class="desktop-icon" onclick="about()"><span class="symbol">ℹ️</span>About dilBrowser</div>
+  <div class="desktop-icons">
+    <div class="desktop-icon" onclick="showBrowser()">
+      <span class="symbol info">🌐</span>dilBrowser
+    </div>
+    <div class="desktop-icon" onclick="about()">
+      <span class="symbol info">ℹ️</span>About dilBrowser
+    </div>
+    <div class="desktop-icon" onclick="openApp('https://www.tiktok.com/')">
+      <span class="symbol tiktok">♪</span>TikTok
+    </div>
+    <div class="desktop-icon" onclick="openApp('https://soundcloud.com/')">
+      <span class="symbol soundcloud">☁</span>SoundCloud
+    </div>
+    <div class="desktop-icon" onclick="openApp('https://open.spotify.com/')">
+      <span class="symbol spotify">≋</span>Spotify
+    </div>
+  </div>
 </div>
 
 <div class="window" id="window">
@@ -69,11 +90,14 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:white;height:100vh;o
     <input id="address" placeholder="Search or enter a website address" onkeydown="if(event.key==='Enter')navigate(this.value)">
     <button onclick="navigate(document.getElementById('address').value)">Go</button>
   </div>
-  <div class="page" id="page">
+  <div class="page">
     <div class="home" id="home">
       <div class="logo">dilBrowser</div>
       <div class="subtitle">Your own little corner of the internet.</div>
-      <div class="search"><input id="homesearch" placeholder="Search or enter a website..." onkeydown="if(event.key==='Enter')navigate(this.value)"><button onclick="navigate(document.getElementById('homesearch').value)">Search</button></div>
+      <div class="search">
+        <input id="homesearch" placeholder="Search or enter a website..." onkeydown="if(event.key==='Enter')navigate(this.value)">
+        <button onclick="navigate(document.getElementById('homesearch').value)">Search</button>
+      </div>
       <div class="links">
         <button onclick="navigate('https://www.wikipedia.org')">📚 Wikipedia</button>
         <button onclick="navigate('https://www.example.com')">🌐 Example</button>
@@ -89,11 +113,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:white;height:100vh;o
   <h3>Start</h3>
   <div class="startgrid">
     <button onclick="goHome();hideStart()">🏠<br>Home</button>
+    <button onclick="openApp('https://www.tiktok.com/');hideStart()">♪<br>TikTok</button>
+    <button onclick="openApp('https://soundcloud.com/');hideStart()">☁<br>SoundCloud</button>
+    <button onclick="openApp('https://open.spotify.com/');hideStart()">≋<br>Spotify</button>
     <button onclick="navigate('https://www.wikipedia.org');hideStart()">📚<br>Wikipedia</button>
-    <button onclick="navigate('https://developer.mozilla.org');hideStart()">💻<br>Developer</button>
-    <button onclick="navigate('https://www.example.com');hideStart()">🌐<br>Example</button>
     <button onclick="about();hideStart()">ℹ️<br>About</button>
-    <button onclick="showBrowser();hideStart()">🪟<br>Browser</button>
   </div>
 </div>
 
@@ -113,6 +137,10 @@ let historyList=[];
 let historyIndex=-1;
 let maximized=false;
 let previousStyle={};
+
+function openApp(url){
+  window.open(url,'_blank','noopener,noreferrer');
+}
 
 function normalizeUrl(value){
   value=value.trim();
@@ -139,10 +167,16 @@ function navigate(value,addHistory=true){
   showBrowser();
 }
 function goBack(){
-  if(historyIndex>0){historyIndex--;navigate(historyList[historyIndex],false);}
+  if(historyIndex>0){
+    historyIndex--;
+    navigate(historyList[historyIndex],false);
+  }
 }
 function goForward(){
-  if(historyIndex<historyList.length-1){historyIndex++;navigate(historyList[historyIndex],false);}
+  if(historyIndex<historyList.length-1){
+    historyIndex++;
+    navigate(historyList[historyIndex],false);
+  }
 }
 function reloadPage(){
   if(!viewer.hidden&&viewer.src) viewer.src=viewer.src;
@@ -160,20 +194,36 @@ function closeBrowser(){win.classList.add('hidden')}
 function minimize(){win.classList.add('hidden')}
 function maximize(){
   if(!maximized){
-    previousStyle={left:win.style.left,top:win.style.top,width:win.style.width,height:win.style.height,transform:win.style.transform,borderRadius:win.style.borderRadius};
-    win.style.left='0';win.style.top='0';win.style.width='100vw';win.style.height='calc(100vh - 52px)';win.style.transform='none';win.style.borderRadius='0';maximized=true;
+    previousStyle={
+      left:win.style.left,top:win.style.top,width:win.style.width,
+      height:win.style.height,transform:win.style.transform,
+      borderRadius:win.style.borderRadius
+    };
+    win.style.left='0';
+    win.style.top='0';
+    win.style.width='100vw';
+    win.style.height='calc(100vh - 52px)';
+    win.style.transform='none';
+    win.style.borderRadius='0';
+    maximized=true;
   }else{
-    Object.assign(win.style,previousStyle);maximized=false;
+    Object.assign(win.style,previousStyle);
+    maximized=false;
   }
 }
 function toggleStart(){document.getElementById('startmenu').classList.toggle('hidden')}
 function hideStart(){document.getElementById('startmenu').classList.add('hidden')}
-function about(){alert('dilBrowser\\nA Windows-inspired desktop and browser demo. Some websites block embedding, so they may not load inside the window.')}
+function about(){
+  alert('dilBrowser\nA Windows-inspired desktop and browser demo. TikTok, SoundCloud, and Spotify open in new tabs. Some websites block embedding inside the browser window.');
+}
 function updateClock(){
   const now=new Date();
-  document.getElementById('clock').innerHTML=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+'<br>'+now.toLocaleDateString();
+  document.getElementById('clock').innerHTML=
+    now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+
+    '<br>'+now.toLocaleDateString();
 }
-updateClock();setInterval(updateClock,1000);
+updateClock();
+setInterval(updateClock,1000);
 
 const titlebar=document.getElementById('titlebar');
 let dragging=false,offsetX=0,offsetY=0;
@@ -196,4 +246,3 @@ titlebar.addEventListener('pointercancel',()=>dragging=false);
 </script>
 </body>
 </html>
-

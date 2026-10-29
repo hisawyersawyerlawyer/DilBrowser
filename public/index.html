@@ -1,3 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dilBrowser</title>
+<style>
+:root {
+  --accent: #7768f5;
+  --glass: rgba(255,255,255,.82);
+  --ink: #24243b;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, system-ui, Arial, sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 15% 15%, #f6d9ff, transparent 36%),
+    radial-gradient(circle at 85% 25%, #b8e6ff, transparent 36%),
+    linear-gradient(135deg, #dce5ff, #f9e9f2 55%, #d8f7ef);
+  overflow: hidden;
+}
+header {
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  background: var(--glass);
+  border-bottom: 1px solid #ffffffa8;
+  backdrop-filter: blur(18px);
+}
+.brand { font-size: 20px; font-weight: 850; letter-spacing: -.7px; }
+.brand span { color: var(--accent); }
+button, input { font: inherit; }
+button {
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  background: white;
+  color: var(--ink);
+  transition: transform .15s, background .15s;
+}
+button:hover { transform: translateY(-1px); background: #f0edff; }
+.primary { background: var(--accent); color: white; }
+.primary:hover { background: #6555e5; }
+#desktop {
+  height: calc(100vh - 122px);
+  padding: 22px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 100px);
+  grid-auto-rows: 105px;
+  gap: 10px;
+  align-content: start;
+  overflow: auto;
+}
+.app-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: 17px;
+  background: transparent;
+  padding: 8px 4px;
+  min-width: 0;
+  color: #292841;
+  overflow-wrap: anywhere;
+}
+.app-icon:hover {
+  background: #ffffff8a;
+  border-color: #ffffff;
+}
+.emoji {
+  width: 55px;
+  height: 55px;
+  display: grid;
+  place-items: center;
+  border-radius: 17px;
+  background: #ffffffd9;
+  box-shadow: 0 7px 20px #6d72a31b;
+  font-size: 29px;
+}
+.app-label { font-size: 12px; font-weight: 650; text-align: center; }
+#taskbar {
+  position: fixed;
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--glass);
+  border: 1px solid #ffffffc9;
+  border-radius: 17px;
+  box-shadow: 0 10px 35px #4a47751b;
+  backdrop-filter: blur(20px);
+}
+#taskbar .spacer { flex: 1; }
+#clock { font-size: 12px; font-weight: 700; padding: 0 10px; }
+.window {
+  position: fixed;
+  z-index: 5;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: min(950px, 92vw);
+  height: min(650px, 78vh);
+  min-height: 270px;
+  background: white;
+  border: 1px solid #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 25px 90px #24244440;
+  display: flex;
+  flex-direction: column;
+}
+.window.hidden { display: none; }
+.win-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #f8f7ff;
+  border-bottom: 1px solid #e9e7f4;
+  cursor: move;
+  user-select: none;
+}
+.win-title { flex: 1; font-size: 13px; font-weight: 800; }
+.win-head button { padding: 6px 10px; border-radius: 8px; }
+.win-body { flex: 1; min-height: 0; position: relative; }
+.win-body iframe { border: 0; width: 100%; height: 100%; background: white; }
+.browser-tools {
+  display: flex;
+  gap: 7px;
+  padding: 9px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+.browser-tools input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #dedcec;
+  border-radius: 11px;
+  padding: 10px 12px;
+  outline-color: var(--accent);
+}
+.home {
+  padding: 30px;
+  height: 100%;
+  overflow: auto;
+  background: linear-gradient(145deg,#fff,#f4f1ff);
+}
+.home h1 { font-size: clamp(28px,5vw,46px); margin: 10px 0; }
+.home p { color: #77748e; }
+.home-search { display: flex; gap: 8px; max-width: 680px; margin-top: 25px; }
+.home-search input {
+  min-width: 0;
+  flex: 1;
+  padding: 14px;
+  border: 1px solid #dedcec;
+  border-radius: 12px;
+}
+.settings { padding: 24px; line-height: 1.8; }
+.settings input { max-width: 100%; }
+@media(max-width:600px) {
+  header { padding: 0 12px; }
+  #desktop { padding: 12px; grid-template-columns: repeat(3,minmax(75px,1fr)); }
+  .window { width: 96vw; height: 82vh; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">dil<span>Browser</span></div>
+  <button onclick="openApp('Proxy')">⌕ Open Proxy</button>
+</header>
+
+<main id="desktop"></main>
+
+<div id="taskbar">
+  <button class="primary" onclick="openApp('Proxy')">⌕</button>
+  <button onclick="openApp('Geometry Dash')">🎮</button>
+  <button onclick="openApp('Google')">🔎</button>
+  <button onclick="openApp('Settings')">⚙️</button>
+  <div class="spacer"></div>
+  <div id="clock"></div>
+</div>
+
+<script src="/uv/uv.bundle.js"></script>
+<script src="/uv.config.js"></script>
+<script>
+const apps = [
+  {name:"Proxy", icon:"🌐", builtin:true},
+  {name:"Geometry Dash", icon:"🎮", url:"https://truffled.lol/games/geo/index.html"},
+  {name:"YouTube", icon:"▶️", url:"https://www.youtube.com/"},
+  {name:"Google", icon:"🔎", url:"https://www.google.com/"},
+  {name:"Discord", icon:"💬", url:"https://discord.com/app"},
+  {name:"TikTok", icon:"🎵", url:"https://www.tiktok.com/"},
+  {name:"Spotify", icon:"🎧", url:"https://open.spotify.com/"},
+  {name:"SoundCloud", icon:"☁️", url:"https://soundcloud.com/"},
+  {name:"Wikipedia", icon:"📚", url:"https://www.wikipedia.org/"},
+  {name:"Minecraft Classic", icon:"⛏️", url:"https://classic.minecraft.net/"},
+  {name:"Poki", icon:"🕹️", url:"https://poki.com/"},
+  {name:"CrazyGames", icon:"🎲", url:"https://www.crazygames.com/"},
+  {name:"Cookie Clicker", icon:"🍪", url:"https://orteil.dashnet.org/cookieclicker/"},
+  {name:"Tetris", icon:"🧩", url:"https://tetris.com/play-tetris"},
+  {name:"2048", icon:"🔢", url:"https://play2048.co/"},
+  {name:"Scratch", icon:"🐱", url:"https://scratch.mit.edu/"},
+  {name:"Reddit", icon:"👽", url:"https://www.reddit.com/"},
+  {name:"Twitch", icon:"🟣", url:"https://www.twitch.tv/"},
+  {name:"GitHub", icon:"🐙", url:"https://github.com/"},
+  {name:"Classroom", icon:"🎓", url:"https://classroom.google.com/"},
+  {name:"Google Drive", icon:"📁", url:"https://drive.google.com/"},
+  {name:"ChatGPT", icon:"🤖", url:"https://chatgpt.com/"},
+  {name:"Roblox", icon:"⬜", url:"https://www.roblox.com/"},
+  {name:"Pinterest", icon:"📌", url:"https://www.pinterest.com/"},
+  {name:"Khan Academy", icon:"📖", url:"https://www.khanacademy.org/"},
+  {name:"Weather", icon:"🌤️", url:"https://weather.com/"},
+  {name:"Clock", icon:"🕒", builtin:true},
+  {name:"Settings", icon:"⚙️", builtin:true}
+];
+
+const desktop = document.getElementById("desktop");
+let topZ = 10;
+let windowCount = 0;
+
+function renderDesktop() {
+  desktop.innerHTML = "";
+  apps.forEach(app => {
+    const button = document.createElement("button");
+    button.className = "app-icon";
+    button.innerHTML =
+      `<span class="emoji">${app.icon}</span>` +
+      `<span class="app-label">${app.name}</span>`;
+    button.addEventListener("click", () => openApp(app.name));
+    desktop.appendChild(button);
+  });
+}
+
+function normalizeUrl(value) {
+  value = value.trim();
+  if (!value) return "";
+  if (!/^https?:\/\//i.test(value)) {
+    value = value.includes(".") && !value.includes(" ")
+      ? "https://" + value
+      : "https://www.google.com/search?q=" + encodeURIComponent(value);
+  }
+  try {
+    const url = new URL(value);
+    if (!["http:", "https:"].includes(url.protocol)) return "";
+    return url.href;
+  } catch {
+    return "";
+  }
+}
+
+async function startProxy() {
+  if (!("serviceWorker" in navigator)) {
+    throw new Error("This browser does not support service workers.");
+  }
+  await navigator.serviceWorker.register("/uv/uv.sw.js", {scope:"/"});
+  await navigator.serviceWorker.ready;
+}
+
+function proxyPath(url) {
+  return __uv$config.prefix + __uv$config.encodeUrl(url);
+}
+
+function makeWindow(title, bodyHTML) {
+  const win = document.createElement("section");
+  win.className = "window";
+  win.style.zIndex = ++topZ;
+  win.innerHTML = `
+    <div class="win-head">
+      <span class="win-title">${title}</span>
+      <button data-action="min">—</button>
+      <button data-action="max">□</button>
+      <button data-action="close">✕</button>
+    </div>
+    <div class="win-body">${bodyHTML}</div>`;
+  document.body.appendChild(win);
+
+  const head = win.querySelector(".win-head");
+  let dragging = false, dx = 0, dy = 0;
+  head.addEventListener("pointerdown", e => {
+    if (e.target.closest("button")) return;
+    dragging = true;
+    const rect = win.getBoundingClientRect();
+    dx = e.clientX - rect.left;
+    dy = e.clientY - rect.top;
+    win.style.transform = "none";
+    win.style.left = rect.left + "px";
+    win.style.top = rect.top + "px";
+    win.style.zIndex = ++topZ;
+    head.setPointerCapture(e.pointerId);
+  });
+  head.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    win.style.left = Math.max(0, Math.min(innerWidth-win.offsetWidth,
+      e.clientX-dx)) + "px";
+    win.style.top = Math.max(0, Math.min(innerHeight-win.offsetHeight-60,
+      e.clientY-dy)) + "px";
+  });
+  head.addEventListener("pointerup", () => dragging = false);
+
+  win.addEventListener("pointerdown", () => win.style.zIndex = ++topZ);
+  win.querySelector('[data-action="close"]').onclick = () => win.remove();
+  win.querySelector('[data-action="min"]').onclick = () => win.classList.add("hidden");
+  win.querySelector('[data-action="max"]').onclick = () => {
+    if (win.dataset.max === "yes") {
+      win.style.left = "50%";
+      win.style.top = "50%";
+      win.style.width = "min(950px,92vw)";
+      win.style.height = "min(650px,78vh)";
+      win.style.transform = "translate(-50%,-50%)";
+      win.dataset.max = "no";
+    } else {
+      win.style.left = "0";
+      win.style.top = "62px";
+      win.style.width = "100vw";
+      win.style.height = "calc(100vh - 122px)";
+      win.style.transform = "none";
+      win.dataset.max = "yes";
+    }
+  };
+  return win;
+}
+
+async function showProxiedSite(frame, input) {
+  const url = normalizeUrl(input);
+  if (!url) {
+    alert("Enter a valid website address or search phrase.");
+    return;
+  }
+  try {
+    await startProxy();
+    frame.src = proxyPath(url);
+  } catch (error) {
+    alert("Proxy setup failed: " + error.message);
+  }
+}
+
+function openApp(name) {
+  const app = apps.find(item => item.name === name);
+  if (!app) return;
+
+  if (app.builtin && name === "Settings") {
+    const win = makeWindow("Settings", `
+      <div class="settings">
+        <h2>dilBrowser Settings</h2>
+        <p>Change the desktop accent color.</p>
+        <input type="color" value="#7768f5" id="accentPicker">
+        <p>Proxy engine: Ultraviolet</p>
+        <p>Server endpoint: <code>/bare/</code></p>
+        <p>Use the Proxy app to enter a website address.</p>
+      </div>`);
+    win.querySelector("#accentPicker").oninput = e =>
+      document.documentElement.style.setProperty("--accent", e.target.value);
+    return;
+  }
+
+  if (app.builtin && name === "Clock") {
+    const win = makeWindow("Clock", `
+      <div class="home" style="text-align:center">
+        <h1 id="bigClock"></h1><p>Your dilBrowser clock</p>
+      </div>`);
+    const tick = () => {
+      const el = win.querySelector("#bigClock");
+      if (el) el.textContent = new Date().toLocaleTimeString();
+    };
+    tick();
+    const timer = setInterval(() => {
+      if (!win.isConnected) return clearInterval(timer);
+      tick();
+    }, 1000);
+    return;
+  }
+
+  if (name === "Proxy") {
+    const win = makeWindow("dilBrowser Proxy", `
+      <div style="display:flex;flex-direction:column;height:100%">
+        <form class="browser-tools" id="proxyForm">
+          <input id="proxyInput" placeholder="Enter a website or search phrase" autocomplete="url">
+          <button class="primary" type="submit">Go</button>
+          <button type="button" id="openExternal">↗</button>
+        </form>
+        <div class="win-body" style="flex:1">
+          <div class="home" id="proxyHome">
+            <h1>Browse your web.</h1>
+            <p>Enter a website above to open it through the proxy server.</p>
+            <div class="home-search">
+              <input id="homeInput" placeholder="https://example.com">
+              <button class="primary" id="homeGo">Browse</button>
+            </div>
+          </div>
+          <iframe id="proxyFrame" title="Proxied website" style="display:none"></iframe>
+        </div>
+      </div>`);
+    const form = win.querySelector("#proxyForm");
+    const input = win.querySelector("#proxyInput");
+    const frame = win.querySelector("#proxyFrame");
+    const home = win.querySelector("#proxyHome");
+    const homeInput = win.querySelector("#homeInput");
+
+    const go = async value => {
+      const url = normalizeUrl(value);
+      if (!url) return alert("Enter a valid URL or search phrase.");
+      input.value = url;
+      home.style.display = "none";
+      frame.style.display = "block";
+      await showProxiedSite(frame, url);
+    };
+    form.onsubmit = e => { e.preventDefault(); go(input.value); };
+    win.querySelector("#homeGo").onclick = () => go(homeInput.value);
+    homeInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") go(homeInput.value);
+    });
+    win.querySelector("#openExternal").onclick = () => {
+      const url = normalizeUrl(input.value);
+      if (url) window.open(url, "_blank", "noopener");
+    };
+    return;
+  }
+
+  if (!app.url) return;
+  const win = makeWindow(app.name, `
+    <div class="win-body" style="flex:1">
+      <iframe title="${app.name}" loading="lazy"></iframe>
+    </div>`);
+  const frame = win.querySelector("iframe");
+  showProxiedSite(frame, app.url);
+}
+
+renderDesktop();
+
+function updateClock() {
+  document.getElementById("clock").textContent =
+    new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+}
+updateClock();
+setInterval(updateClock, 15000);
+</script>
+</body>
+</html>
 
 <!DOCTYPE html>
 <html lang="en">
